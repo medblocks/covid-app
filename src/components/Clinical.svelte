@@ -13,11 +13,7 @@ import Assessment from "./Assessment.svelte";
 
     onMount(async () => {
         try {
-            const [openEHr, fhirDemographics] = await Promise.all([
-                openehr.get(`/openehr/v1/ehr/${ehr}`),
-                fhir.get(`/Patient/${ehr}`),
-            ]);
-            patientdata = fhirDemographics.data;
+            await openehr.get(`/openehr/v1/ehr/${ehr}`)
         } catch (e) {
             if (e.response.status === 404) {
                 console.log("EHR Does not exist, creating");
@@ -25,6 +21,8 @@ import Assessment from "./Assessment.svelte";
                 console.log("Created EHR", r.data);
             }
         }
+        const fhirDemographics = await fhir.get(`/Patient/${ehr}`)
+        patientdata = fhirDemographics.data;
     });
 </script>
 
