@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { calcResp } from "./scores";
+
   let loading = false;
   function handleSubmit(e) {
     console.log(JSON.stringify(e.detail));
@@ -11,10 +13,17 @@
   let temp;
   let heart;
   let bp;
+
+  let respScore: string | undefined;
+
+  $: {
+    respScore = calcResp(resp);
+    console.log(resp, respScore);
+  }
 </script>
 
 <mb-form on:mb-submit={handleSubmit} class="flex flex-col gap-3">
-  <p class="mt-5 text-xl font-bold text-gray-700">Vitals</p>
+  <p class="mt-5 text-xl font-bold text-gray-700">Vitals - {resp}</p>
   <mb-quantity
     path="covid_care_daily_sheet/vitals/body_temperature/temperature"
     label="Temperature"
@@ -48,6 +57,9 @@
     default="/min"
     path="covid_care_daily_sheet/vitals/respiration/rate"
     label="Respiratory Rate"
+    on:mb-input={(e) => {
+      resp = e.target.data?.magnitude;
+    }}
   >
     <mb-unit unit="/min" label="/min" />
   </mb-quantity>
@@ -92,6 +104,10 @@
   <mb-select
     path="covid_care_daily_sheet/vitals/news_uk_rcp/respiration_rate"
     label="Respiration"
+    data={{ code: respScore }}
+    on:mb-input={(e) => {
+      console.log(e.target.data?.ordinal);
+    }}
   >
     <mb-option value="at0018" label="12-20" ordinal="0" />
     <mb-option value="at0019" label="9-11" ordinal="1" />
