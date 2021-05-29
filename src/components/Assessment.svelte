@@ -3,9 +3,18 @@
   function handleSubmit(e) {
     console.log(JSON.stringify(e.detail));
   }
+  let onAir = false;
+
+  let resp;
+  let spo2;
+  let supplemental;
+  let temp;
+  let heart;
+  let bp;
 </script>
 
 <mb-form on:mb-submit={handleSubmit} class="flex flex-col gap-3">
+  <p class="mt-5 text-xl font-bold text-gray-700">Vitals</p>
   <mb-quantity
     path="covid_care_daily_sheet/vitals/body_temperature/temperature"
     label="Temperature"
@@ -30,8 +39,15 @@
   </mb-quantity>
   <mb-quantity
     path="covid_care_daily_sheet/vitals/pulse_heart_beat/rate"
-    label="Pulse"
+    label="Pulse Rate"
     default="/min"
+  >
+    <mb-unit unit="/min" label="/min" />
+  </mb-quantity>
+  <mb-quantity
+    default="/min"
+    path="covid_care_daily_sheet/vitals/respiration/rate"
+    label="Respiratory Rate"
   >
     <mb-unit unit="/min" label="/min" />
   </mb-quantity>
@@ -42,19 +58,91 @@
   <mb-checkbox
     label="On air"
     path="covid_care_daily_sheet/vitals/pulse_oximetry/any_event:0/inspired_oxygen/on_air"
+    data={onAir}
+    on:mb-input={(e) => {
+      onAir = e.target.data;
+    }}
   />
-  <mb-percent
-    path="covid_care_daily_sheet/vitals/pulse_oximetry/any_event:0/inspired_oxygen/percent_o"
-    label="Percent O₂"
-  />
-  <mb-quantity
-    path="covid_care_daily_sheet/vitals/pulse_oximetry/any_event:0/inspired_oxygen/flow_rate"
-    label="Flow rate"
-    default="ml/min"
+  {#if !onAir}
+    <div class="flex gap-3">
+      <mb-percent
+        path="covid_care_daily_sheet/vitals/pulse_oximetry/any_event:0/inspired_oxygen/percent_o"
+        label="Percent O₂"
+      />
+      <mb-quantity
+        path="covid_care_daily_sheet/vitals/pulse_oximetry/any_event:0/inspired_oxygen/flow_rate"
+        label="Flow rate"
+        default="ml/min"
+      >
+        <mb-unit unit="ml/min" label="ml/min" />
+        <mb-unit unit="l/min" label="l/min" />
+      </mb-quantity>
+    </div>
+  {/if}
+  <!-- NEWS Score -->
+  <mb-buttons
+    path="covid_care_daily_sheet/vitals/news_uk_rcp/level_of_consciousness"
+    label="Consciousness"
   >
-    <mb-unit unit="ml/min" label="ml/min" />
-    <mb-unit unit="l/min" label="l/min" />
-  </mb-quantity>
+    <mb-option value="at0024" label="Alert" ordinal="0" />
+    <mb-option value="at0025" label="Not alert" ordinal="3" />
+  </mb-buttons>
+  <!-- Auto-calculated -->
+  <p class="mt-5 text-xl font-bold text-gray-700">EWS Score</p>
+  <mb-select
+    path="covid_care_daily_sheet/vitals/news_uk_rcp/respiration_rate"
+    label="Respiration"
+  >
+    <mb-option value="at0018" label="12-20" ordinal="0" />
+    <mb-option value="at0019" label="9-11" ordinal="1" />
+    <mb-option value="at0020" label="21-24" ordinal="2" />
+    <mb-option value="at0021" label="<=8 or >=25" ordinal="3" /></mb-select
+  >
+  <mb-select
+    path="covid_care_daily_sheet/vitals/news_uk_rcp/oxygen_saturation"
+    label="Saturation"
+  >
+    <mb-option value="at0030" label=">= 96" ordinal="0" />
+    <mb-option value="at0031" label="94-95" ordinal="1" />
+    <mb-option value="at0032" label="92-93" ordinal="2" />
+    <mb-option value="at0033" label="<=91" ordinal="3" /></mb-select
+  >
+  <mb-select
+    path="covid_care_daily_sheet/vitals/news_uk_rcp/supplemental_oxygen"
+    label="Oxygen"
+  >
+    <mb-option value="at0036" label="No" ordinal="0" />
+    <mb-option value="at0037" label="Yes" ordinal="2" /></mb-select
+  >
+  <mb-select
+    path="covid_care_daily_sheet/vitals/news_uk_rcp/body_temperature"
+    label="Temperature"
+  >
+    <mb-option value="at0022" label="36.1-38.0" ordinal="0" />
+    <mb-option value="at0023" label="35.1-36.0 or 38.1-39.0" ordinal="1" />
+    <mb-option value="at0038" label=">=39.1" ordinal="2" />
+    <mb-option value="at0039" label="<=35.0" ordinal="3" /></mb-select
+  >
+  <mb-select
+    path="covid_care_daily_sheet/vitals/news_uk_rcp/systolic_blood_pressure"
+    label="Systolic Blood Pressure"
+  >
+    <mb-option value="at0014" label="111-219" ordinal="0" />
+    <mb-option value="at0015" label="101-110" ordinal="1" />
+    <mb-option value="at0016" label="91-100" ordinal="2" />
+    <mb-option value="at0017" label="<=90 or >= 220" ordinal="3" /></mb-select
+  >
+  <mb-select
+    path="covid_care_daily_sheet/vitals/news_uk_rcp/heart_rate"
+    label="Heart Rate"
+  >
+    <mb-option value="at0013" label="51-90" ordinal="0" />
+    <mb-option value="at0012" label="41-50 or 91-110" ordinal="1" />
+    <mb-option value="at0011" label="111-130" ordinal="2" />
+    <mb-option value="at0010" label="<=40 or >=131" ordinal="3" /></mb-select
+  >
+
+  <!-- Contexts -->
   <div class="hidden">
     <mb-context path="covid_care_daily_sheet/category" />
     <mb-context path="covid_care_daily_sheet/context/start_time" />

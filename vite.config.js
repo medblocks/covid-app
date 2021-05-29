@@ -5,5 +5,5 @@ import WindiCSS from 'vite-plugin-windicss'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [svelte(), WindiCSS()],
-  optimizeDeps: { exclude: ["svelte-routing"] }
+  optimizeDeps: { exclude: ["svelte-routing", "medblocks-ui"] }
 })
