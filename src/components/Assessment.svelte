@@ -1,5 +1,9 @@
 <script lang="ts">
   import { calcResp } from "./scores";
+  import{calcSat} from './scores';
+  import{calcTemp} from './scores';
+  import{calcSys} from './scores';
+  import{calcHeart} from './scores';
 
   let loading = false;
   function handleSubmit(e) {
@@ -7,27 +11,27 @@
   }
   let onAir = false;
 
-  let resp;
-  let spo2;
-  let supplemental;
-  let temp;
-  let heart;
-  let bp;
+  let resp,spo2,supplemental,temp,heart,bp,sat,sys;
 
-  let respScore: string | undefined;
+  let respScore,satScore,tempScore,sysScore,heartScore: string | undefined;
 
   $: {
     respScore = calcResp(resp);
-    console.log(resp, respScore);
+    satScore=calcSat(sat)
+    tempScore=calcTemp(temp)
+    sysScore=calcSys(sys)
+    heartScore=calcHeart(heart)
   }
 </script>
 
 <mb-form on:mb-submit={handleSubmit} class="flex flex-col gap-3">
-  <p class="mt-5 text-xl font-bold text-gray-700">Vitals - {resp}</p>
+  <p class="mt-5 text-xl font-bold text-gray-700">Vitals </p>
   <mb-quantity
     path="covid_care_daily_sheet/vitals/body_temperature/temperature"
     label="Temperature"
-    default="[degF]"
+    default="[degF]" on:mb-input={(e) => {
+      temp = e.target.data?.magnitude;
+    }}
   >
     <mb-unit unit="[degF]" label="°F" />
     <mb-unit unit="Cel" label="°C" />
@@ -35,7 +39,9 @@
   <mb-quantity
     path="covid_care_daily_sheet/vitals/blood_pressure/systolic"
     label="Systolic Blood Pressure"
-    default="mm[Hg]"
+    default="mm[Hg]" on:mb-input={(e) => {
+      sys = e.target.data?.magnitude;
+    }}
   >
     <mb-unit unit="mm[Hg]" label="mm[Hg]" />
   </mb-quantity>
@@ -49,7 +55,9 @@
   <mb-quantity
     path="covid_care_daily_sheet/vitals/pulse_heart_beat/rate"
     label="Pulse Rate"
-    default="/min"
+    default="/min"  on:mb-input={(e) => {
+      heart = e.target.data?.magnitude;
+    }}
   >
     <mb-unit unit="/min" label="/min" />
   </mb-quantity>
@@ -65,7 +73,9 @@
   </mb-quantity>
   <mb-percent
     path="covid_care_daily_sheet/vitals/pulse_oximetry/any_event:0/spo"
-    label="SpO₂ (%)"
+    label="SpO₂ (%)"  on:mb-input={(e) => {
+      sat = e.target.data?.numerator;
+    }}
   />
   <mb-checkbox
     label="On air"
@@ -105,9 +115,7 @@
     path="covid_care_daily_sheet/vitals/news_uk_rcp/respiration_rate"
     label="Respiration"
     data={{ code: respScore }}
-    on:mb-input={(e) => {
-      console.log(e.target.data?.ordinal);
-    }}
+   
   >
     <mb-option value="at0018" label="12-20" ordinal="0" />
     <mb-option value="at0019" label="9-11" ordinal="1" />
@@ -116,7 +124,7 @@
   >
   <mb-select
     path="covid_care_daily_sheet/vitals/news_uk_rcp/oxygen_saturation"
-    label="Saturation"
+    label="Saturation"  data={{ code: satScore }}
   >
     <mb-option value="at0030" label=">= 96" ordinal="0" />
     <mb-option value="at0031" label="94-95" ordinal="1" />
@@ -125,14 +133,14 @@
   >
   <mb-select
     path="covid_care_daily_sheet/vitals/news_uk_rcp/supplemental_oxygen"
-    label="Oxygen"
+    label="Oxygen" data={{code:(onAir?'at0037':'at0036')}}
   >
     <mb-option value="at0036" label="No" ordinal="0" />
     <mb-option value="at0037" label="Yes" ordinal="2" /></mb-select
   >
   <mb-select
     path="covid_care_daily_sheet/vitals/news_uk_rcp/body_temperature"
-    label="Temperature"
+    label="Temperature" data={{code:tempScore}}
   >
     <mb-option value="at0022" label="36.1-38.0" ordinal="0" />
     <mb-option value="at0023" label="35.1-36.0 or 38.1-39.0" ordinal="1" />
@@ -141,7 +149,7 @@
   >
   <mb-select
     path="covid_care_daily_sheet/vitals/news_uk_rcp/systolic_blood_pressure"
-    label="Systolic Blood Pressure"
+    label="Systolic Blood Pressure" data={{code:sysScore}}
   >
     <mb-option value="at0014" label="111-219" ordinal="0" />
     <mb-option value="at0015" label="101-110" ordinal="1" />
@@ -150,7 +158,7 @@
   >
   <mb-select
     path="covid_care_daily_sheet/vitals/news_uk_rcp/heart_rate"
-    label="Heart Rate"
+    label="Heart Rate"  data={{code:heartScore}}
   >
     <mb-option value="at0013" label="51-90" ordinal="0" />
     <mb-option value="at0012" label="41-50 or 91-110" ordinal="1" />
