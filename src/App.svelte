@@ -1,5 +1,4 @@
 <script>
-  import "./index.css";
   import PatientRegistration from "./components/PatientRegistration.svelte";
   import { Router, Link, Route } from "svelte-routing";
   import Layout from "./components/Layout.svelte";

@@ -1,46 +1,47 @@
 version: "3"
 services:
-  ehrbase:
-    image: ehrbase/ehrbase:next
-    ports:
-      - 8080:8080
-    environment:
-      SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/ehrbase"
-      SPRING_DATASOURCE_USERNAME: ehrbase
-      SPRING_DATASOURCE_PASSWORD: ehrbase
-      SERVER_AQLCONFIG_USEJSQUERY: "false"
-      SERVER_NODENAME: "localhost"
-      SYSTEM_NAME: local.ehrbase.org
-    depends_on:
-      - db
+    ehrbase:
+        image: ehrbase/ehrbase:next
+        ports:
+            - 8080:8080
+        environment:
+            SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/ehrbase"
+            SPRING_DATASOURCE_USERNAME: ehrbase
+            SPRING_DATASOURCE_PASSWORD: ehrbase
+            SERVER_AQLCONFIG_USEJSQUERY: "false"
+            SERVER_NODENAME: "localhost"
+        depends_on:
+            - db
 
-  db:
-    image: ehrbase/ehrbase-postgres
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_PASSWORD=postgres
-  fhir:
-    image: "hapiproject/hapi:v5.3.0"
-    ports:
-      - "8090:8080"
-    environment:
-      spring.datasource.url: "jdbc:postgresql://fhir-db:5432/hapi_r4"
-      spring.datasource.username: admin
-      spring.datasource.password: admin
-      spring.datasource.driverClassName: org.postgresql.Driver
-      hapi.fhir.subscription.resthook_enabled: "true"
-      hapi.fhir.subscription.websocket_enabled: "true"
-      hapi.fhir.client_id_strategy: ANY
-  fhir-db:
-    image: postgres
-    volumes:
-      - fhir-db-data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_PASSWORD: admin
-      POSTGRES_USER: admin
-      POSTGRES_DB: hapi_r4
-
+    db:
+        image: postgres
+        volumes:
+            - db-data:/var/lib/postgresql/data
+        environment:
+            POSTGRES_PASSWORD: ehrbase
+            POSTGRES_USER: ehrbase
+            POSTGRES_DB: ehrbase
+    fhir:
+        image: "hapiproject/hapi:v5.3.0"
+        ports:
+            - "8090:8080"
+        environment:
+            spring.datasource.url: 'jdbc:postgresql://fhir-db:5432/hapi_r4'
+            spring.datasource.username: admin
+            spring.datasource.password: admin
+            spring.datasource.driverClassName: org.postgresql.Driver
+            hapi.fhir.subscription.resthook_enabled: 'true'
+            hapi.fhir.subscription.websocket_enabled: 'true'
+            hapi.fhir.client_id_strategy: ANY
+    fhir-db:
+        image: postgres
+        volumes: 
+            - fhir-db-data:/var/lib/postgresql/data
+        environment: 
+            POSTGRES_PASSWORD: admin
+            POSTGRES_USER: admin
+            POSTGRES_DB: hapi_r4
+            
 volumes:
-  db-data:
-  fhir-db-data:
+    db-data:
+    fhir-db-data:
