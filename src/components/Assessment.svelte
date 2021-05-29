@@ -1,45 +1,54 @@
 <script lang="ts">
   import { calcResp } from "./scores";
-  import{calcSat} from './scores';
-  import{calcTemp} from './scores';
-  import{calcSys} from './scores';
-  import{calcHeart} from './scores';
-
+  import { calcSat } from "./scores";
+  import { calcTemp } from "./scores";
+  import { calcSys } from "./scores";
+  import { calcHeart } from "./scores";
+  import "@shoelace-style/shoelace/dist/components/details/details";
   let loading = false;
   function handleSubmit(e) {
     console.log(JSON.stringify(e.detail));
   }
-  let onAir = false;
+  let onAir = true;
 
-  let resp,spo2,supplemental,temp,heart,bp,sat,sys;
+  let resp, temp, heart, sat, sys: number | undefined;
+  let respScore, satScore, tempScore, sysScore, heartScore: string | undefined;
 
-  let respScore,satScore,tempScore,sysScore,heartScore: string | undefined;
-
+  let scores = {};
+  let total;
   $: {
     respScore = calcResp(resp);
-    satScore=calcSat(sat)
-    tempScore=calcTemp(temp)
-    sysScore=calcSys(sys)
-    heartScore=calcHeart(heart)
+    satScore = calcSat(sat);
+    tempScore = calcTemp(temp);
+    sysScore = calcSys(sys);
+    heartScore = calcHeart(heart);
+    if (Object.keys(scores).length === 7) {
+      total = Object.values(scores)
+        .map((ord: any) => ord.ordinal)
+        .reduce((a, b) => a + b);
+    } else {
+      total = null;
+    }
   }
 </script>
 
 <mb-form on:mb-submit={handleSubmit} class="flex flex-col gap-3">
-  <p class="mt-5 text-xl font-bold text-gray-700">Vitals </p>
+  <p class="mt-5 text-xl font-bold text-gray-700">Vitals</p>
   <mb-quantity
     path="covid_care_daily_sheet/vitals/body_temperature/temperature"
     label="Temperature"
-    default="[degF]" on:mb-input={(e) => {
+    default="[degF]"
+    on:mb-input={(e) => {
       temp = e.target.data?.magnitude;
     }}
   >
     <mb-unit unit="[degF]" label="°F" />
-    <mb-unit unit="Cel" label="°C" />
   </mb-quantity>
   <mb-quantity
     path="covid_care_daily_sheet/vitals/blood_pressure/systolic"
     label="Systolic Blood Pressure"
-    default="mm[Hg]" on:mb-input={(e) => {
+    default="mm[Hg]"
+    on:mb-input={(e) => {
       sys = e.target.data?.magnitude;
     }}
   >
@@ -55,7 +64,8 @@
   <mb-quantity
     path="covid_care_daily_sheet/vitals/pulse_heart_beat/rate"
     label="Pulse Rate"
-    default="/min"  on:mb-input={(e) => {
+    default="/min"
+    on:mb-input={(e) => {
       heart = e.target.data?.magnitude;
     }}
   >
@@ -73,7 +83,8 @@
   </mb-quantity>
   <mb-percent
     path="covid_care_daily_sheet/vitals/pulse_oximetry/any_event:0/spo"
-    label="SpO₂ (%)"  on:mb-input={(e) => {
+    label="SpO₂ (%)"
+    on:mb-input={(e) => {
       sat = e.target.data?.numerator;
     }}
   />
@@ -103,6 +114,9 @@
   {/if}
   <!-- NEWS Score -->
   <mb-buttons
+    on:mb-input={(e) => {
+      scores = { ...scores, Consciousness: e.target.data };
+    }}
     path="covid_care_daily_sheet/vitals/news_uk_rcp/level_of_consciousness"
     label="Consciousness"
   >
@@ -110,61 +124,104 @@
     <mb-option value="at0025" label="Not alert" ordinal="3" />
   </mb-buttons>
   <!-- Auto-calculated -->
-  <p class="mt-5 text-xl font-bold text-gray-700">EWS Score</p>
-  <mb-select
-    path="covid_care_daily_sheet/vitals/news_uk_rcp/respiration_rate"
-    label="Respiration"
-    data={{ code: respScore }}
-   
-  >
-    <mb-option value="at0018" label="12-20" ordinal="0" />
-    <mb-option value="at0019" label="9-11" ordinal="1" />
-    <mb-option value="at0020" label="21-24" ordinal="2" />
-    <mb-option value="at0021" label="<=8 or >=25" ordinal="3" /></mb-select
-  >
-  <mb-select
-    path="covid_care_daily_sheet/vitals/news_uk_rcp/oxygen_saturation"
-    label="Saturation"  data={{ code: satScore }}
-  >
-    <mb-option value="at0030" label=">= 96" ordinal="0" />
-    <mb-option value="at0031" label="94-95" ordinal="1" />
-    <mb-option value="at0032" label="92-93" ordinal="2" />
-    <mb-option value="at0033" label="<=91" ordinal="3" /></mb-select
-  >
-  <mb-select
-    path="covid_care_daily_sheet/vitals/news_uk_rcp/supplemental_oxygen"
-    label="Oxygen" data={{code:(onAir?'at0037':'at0036')}}
-  >
-    <mb-option value="at0036" label="No" ordinal="0" />
-    <mb-option value="at0037" label="Yes" ordinal="2" /></mb-select
-  >
-  <mb-select
-    path="covid_care_daily_sheet/vitals/news_uk_rcp/body_temperature"
-    label="Temperature" data={{code:tempScore}}
-  >
-    <mb-option value="at0022" label="36.1-38.0" ordinal="0" />
-    <mb-option value="at0023" label="35.1-36.0 or 38.1-39.0" ordinal="1" />
-    <mb-option value="at0038" label=">=39.1" ordinal="2" />
-    <mb-option value="at0039" label="<=35.0" ordinal="3" /></mb-select
-  >
-  <mb-select
-    path="covid_care_daily_sheet/vitals/news_uk_rcp/systolic_blood_pressure"
-    label="Systolic Blood Pressure" data={{code:sysScore}}
-  >
-    <mb-option value="at0014" label="111-219" ordinal="0" />
-    <mb-option value="at0015" label="101-110" ordinal="1" />
-    <mb-option value="at0016" label="91-100" ordinal="2" />
-    <mb-option value="at0017" label="<=90 or >= 220" ordinal="3" /></mb-select
-  >
-  <mb-select
-    path="covid_care_daily_sheet/vitals/news_uk_rcp/heart_rate"
-    label="Heart Rate"  data={{code:heartScore}}
-  >
-    <mb-option value="at0013" label="51-90" ordinal="0" />
-    <mb-option value="at0012" label="41-50 or 91-110" ordinal="1" />
-    <mb-option value="at0011" label="111-130" ordinal="2" />
-    <mb-option value="at0010" label="<=40 or >=131" ordinal="3" /></mb-select
-  >
+
+  <p class="mt-5 text-xl text-gray-700">
+    EWS Score -
+    {#if total}
+      <span class="font-bold text-2xl ml-2">{total}</span>
+    {:else}
+      <span>Needs more details</span>
+    {/if}
+  </p>
+  <div class="hidden">
+    <mb-select
+      on:mb-input={(e) => {
+        scores = { ...scores, Respiration: e.target.data };
+      }}
+      path="covid_care_daily_sheet/vitals/news_uk_rcp/respiration_rate"
+      label="Respiration"
+      data={{ code: respScore }}
+    >
+      <mb-option value="at0018" label="12-20" ordinal="0" />
+      <mb-option value="at0019" label="9-11" ordinal="1" />
+      <mb-option value="at0020" label="21-24" ordinal="2" />
+      <mb-option value="at0021" label="<=8 or >=25" ordinal="3" /></mb-select
+    >
+    <mb-select
+      on:mb-input={(e) => {
+        scores = { ...scores, Saturation: e.target.data };
+      }}
+      path="covid_care_daily_sheet/vitals/news_uk_rcp/oxygen_saturation"
+      label="Saturation"
+      data={{ code: satScore }}
+    >
+      <mb-option value="at0030" label=">= 96" ordinal="0" />
+      <mb-option value="at0031" label="94-95" ordinal="1" />
+      <mb-option value="at0032" label="92-93" ordinal="2" />
+      <mb-option value="at0033" label="<=91" ordinal="3" /></mb-select
+    >
+    <mb-select
+      on:mb-input={(e) => {
+        scores = { ...scores, "On Oxygen": e.target.data };
+      }}
+      path="covid_care_daily_sheet/vitals/news_uk_rcp/supplemental_oxygen"
+      label="On Oxygen"
+      data={{ code: onAir ? "at0036" : "at0037" }}
+    >
+      <mb-option value="at0036" label="No" ordinal="0" />
+      <mb-option value="at0037" label="Yes" ordinal="2" /></mb-select
+    >
+    <mb-select
+      on:mb-input={(e) => {
+        scores = { ...scores, Temperature: e.target.data };
+      }}
+      path="covid_care_daily_sheet/vitals/news_uk_rcp/body_temperature"
+      label="Temperature"
+      data={{ code: tempScore }}
+    >
+      <mb-option value="at0022" label="36.1-38.0" ordinal="0" />
+      <mb-option value="at0023" label="35.1-36.0 or 38.1-39.0" ordinal="1" />
+      <mb-option value="at0038" label=">=39.1" ordinal="2" />
+      <mb-option value="at0039" label="<=35.0" ordinal="3" /></mb-select
+    >
+    <mb-select
+      on:mb-input={(e) => {
+        scores = { ...scores, "Systolic Blood Pressure": e.target.data };
+      }}
+      path="covid_care_daily_sheet/vitals/news_uk_rcp/systolic_blood_pressure"
+      label="Systolic Blood Pressure"
+      data={{ code: sysScore }}
+    >
+      <mb-option value="at0014" label="111-219" ordinal="0" />
+      <mb-option value="at0015" label="101-110" ordinal="1" />
+      <mb-option value="at0016" label="91-100" ordinal="2" />
+      <mb-option value="at0017" label="<=90 or >= 220" ordinal="3" /></mb-select
+    >
+    <mb-select
+      on:mb-input={(e) => {
+        scores = { ...scores, "Heart Rate": e.target.data };
+      }}
+      path="covid_care_daily_sheet/vitals/news_uk_rcp/heart_rate"
+      label="Heart Rate"
+      data={{ code: heartScore }}
+    >
+      <mb-option value="at0013" label="51-90" ordinal="0" />
+      <mb-option value="at0012" label="41-50 or 91-110" ordinal="1" />
+      <mb-option value="at0011" label="111-130" ordinal="2" />
+      <mb-option value="at0010" label="<=40 or >=131" ordinal="3" /></mb-select
+    >
+  </div>
+  <sl-details summary="Calculation details">
+    {#each Object.keys(scores) as key}
+      {#if scores[key].ordinal}
+        <p>
+          <span class="font-semibold">{scores[key].ordinal}</span> - {key}: {scores[
+            key
+          ].value}
+        </p>
+      {/if}
+    {/each}
+  </sl-details>
 
   <!-- Contexts -->
   <div class="hidden">
