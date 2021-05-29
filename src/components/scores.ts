@@ -29,16 +29,19 @@ export const calcSat = (rate: number): undefined | string => {
   return;
 };
 export const calcTemp = (rate: number): undefined | string => {
-  if (rate >= 36.1 && rate <= 38.0) {
+  let temp: number;
+  if (rate !== undefined) temp = (rate - 32) * (5 / 9);
+  console.log(temp);
+  if (temp >= 36.1 && temp <= 38.0) {
     return "at0022";
   }
-  if ((rate >= 35.1 && rate <= 36) || (rate >= 38.1 && rate <= 39.0)) {
+  if ((temp >= 35.1 && temp <= 36) || (temp >= 38.1 && temp <= 39.0)) {
     return "at0023";
   }
-  if (rate >= 39.1) {
+  if (temp >= 39.1) {
     return "at0038";
   }
-  if (rate <= 35.0) {
+  if (temp <= 35.0) {
     return "at0039";
   }
   return;
