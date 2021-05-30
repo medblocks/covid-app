@@ -30,8 +30,11 @@ export const calcSat = (rate: number): undefined | string => {
 };
 export const calcTemp = (rate: number): undefined | string => {
   let temp: number;
-  if (rate !== undefined) temp = (rate - 32) * (5 / 9);
-  console.log(temp);
+  if (rate !== undefined) {
+    temp = (rate - 32) * (5 / 9);
+  } else {
+    return;
+  }
   if (temp >= 36.1 && temp <= 38.0) {
     return "at0022";
   }

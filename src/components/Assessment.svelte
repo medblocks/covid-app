@@ -5,10 +5,16 @@
   import { calcSys } from "./scores";
   import { calcHeart } from "./scores";
   import "@shoelace-style/shoelace/dist/components/details/details";
+  import { medications } from "./codes";
+  import { openehr } from "../utils/openehr";
+  import { navigate } from "svelte-routing";
+  import { onMount } from "svelte";
+  export let compositionId: string | undefined = undefined;
+  export let ehrId: string;
+  export let templateId: string = "MCS.CovidCare.DailySheet.v0.1";
+
+  let form;
   let loading = false;
-  function handleSubmit(e) {
-    console.log(JSON.stringify(e.detail));
-  }
   let onAir = true;
 
   let resp, temp, heart, sat, sys: number | undefined;
@@ -16,6 +22,41 @@
 
   let scores = {};
   let total;
+
+  onMount(async () => {
+    if (compositionId) {
+      const r = await openehr.get(`/ecis/v1/composition/${compositionId}`, {
+        params: { format: "FLAT" },
+      });
+      const data = r.data?.composition;
+      if (data) {
+        form.import(data);
+      }
+    }
+  });
+
+  async function handleSubmit(e: CustomEvent) {
+    const data = e.detail;
+    loading = true;
+    if (compositionId) {
+      const r = await openehr.put(
+        `/ecis/v1/composition/${compositionId.split(":")[0]}`,
+        data,
+        {
+          params: { format: "FLAT", templateId, ehrId },
+        }
+      );
+      loading = false;
+    } else {
+      const r = await openehr.post("/ecis/v1/composition/", data, {
+        params: { format: "FLAT", templateId, ehrId },
+      });
+      console.log(r);
+      loading = false;
+    }
+    navigate(`/clinical/${ehrId}`, { replace: true });
+  }
+
   $: {
     respScore = calcResp(resp);
     satScore = calcSat(sat);
@@ -24,16 +65,44 @@
     heartScore = calcHeart(heart);
     if (Object.keys(scores).length === 7) {
       total = Object.values(scores)
-        .map((ord: any) => ord.ordinal)
+        .map((ord: any) => ord?.ordinal)
         .reduce((a, b) => a + b);
     } else {
       total = null;
     }
   }
+  const ctx = {
+    careflow_step: {
+      terminology: "local",
+      value: "Medication recommended",
+      code: "at0109",
+    },
+    current_state: {
+      terminology: "openehr",
+      code: "526",
+      value: "planned",
+    },
+  };
 </script>
 
-<mb-form on:mb-submit={handleSubmit} class="flex flex-col gap-3">
-  <p class="mt-5 text-xl font-bold text-gray-700">Vitals</p>
+<mb-form
+  bind:this={form}
+  on:mb-submit={handleSubmit}
+  class="flex flex-col gap-3"
+  {ctx}
+>
+  <p class="mt-5 text-2xl font-bold text-gray-700">Vitals</p>
+  <mb-buttons
+    on:mb-input={(e) => {
+      console.log("changing alert");
+      scores = { ...scores, Consciousness: e.target.data };
+    }}
+    path="covid_care_daily_sheet/vitals/news_uk_rcp/level_of_consciousness"
+    label="Consciousness"
+  >
+    <mb-option value="at0024" label="Alert" ordinal="0" />
+    <mb-option value="at0025" label="Not alert" ordinal="3" />
+  </mb-buttons>
   <mb-quantity
     path="covid_care_daily_sheet/vitals/body_temperature/temperature"
     label="Temperature"
@@ -113,22 +182,20 @@
     </div>
   {/if}
   <!-- NEWS Score -->
-  <mb-buttons
-    on:mb-input={(e) => {
-      scores = { ...scores, Consciousness: e.target.data };
-    }}
-    path="covid_care_daily_sheet/vitals/news_uk_rcp/level_of_consciousness"
-    label="Consciousness"
-  >
-    <mb-option value="at0024" label="Alert" ordinal="0" />
-    <mb-option value="at0025" label="Not alert" ordinal="3" />
-  </mb-buttons>
+
   <!-- Auto-calculated -->
 
   <p class="mt-5 text-xl text-gray-700">
-    EWS Score -
-    {#if total}
-      <span class="font-bold text-2xl ml-2">{total}</span>
+    Early Warning Score -
+    {#if total != null}
+      <span class="font-bold text-2xl">{total}</span><span class="text-2xl"
+        >/20</span
+      >
+      <mb-context
+        class="hidden"
+        path="covid_care_daily_sheet/vitals/news_uk_rcp/total_score"
+        data={total}
+      />
     {:else}
       <span>Needs more details</span>
     {/if}
@@ -162,7 +229,9 @@
     >
     <mb-select
       on:mb-input={(e) => {
+        console.log("Changed on oxxygen");
         scores = { ...scores, "On Oxygen": e.target.data };
+        console.log(scores);
       }}
       path="covid_care_daily_sheet/vitals/news_uk_rcp/supplemental_oxygen"
       label="On Oxygen"
@@ -213,18 +282,91 @@
   </div>
   <sl-details summary="Calculation details">
     {#each Object.keys(scores) as key}
-      {#if scores[key].ordinal}
+      {#if scores[key]?.ordinal != null}
         <p>
-          <span class="font-semibold">{scores[key].ordinal}</span> - {key}: {scores[
+          <span class="font-semibold">{scores[key]?.ordinal}</span> - {key}: {scores[
             key
           ].value}
         </p>
       {/if}
     {/each}
   </sl-details>
+  <!-- Labs -->
+  <p class="mt-5 text-2xl font-bold text-gray-700">Labs</p>
 
+  <mb-quantity
+    default="mg/dl"
+    path="covid_care_daily_sheet/lab_results/fasting_glucose:0/analyte_result"
+    label="Fasting Glucose"
+  >
+    <mb-unit unit="mg/dl" label="mg/dl" />
+  </mb-quantity>
+
+  <mb-quantity
+    default="mg/dl"
+    path="covid_care_daily_sheet/lab_results/postprandial_blood_sugar/analyte_result"
+    label="Postprandial Glucose"
+  >
+    <mb-unit unit="mg/dl" label="mg/dl" />
+  </mb-quantity>
+
+  <mb-quantity
+    default="mg/L"
+    path="covid_care_daily_sheet/lab_results/crp/analyte_result"
+    label="C-Reactive Protein"
+  >
+    <mb-unit unit="mg/L" label="mg/L" />
+  </mb-quantity>
+  <mb-quantity
+    default="1/mm3"
+    path="covid_care_daily_sheet/lab_results/total_wbc/analyte_result"
+    label="Total WBC"
+  >
+    <mb-unit unit="1/mm3" label="/mm3" />
+  </mb-quantity>
+  <mb-quantity
+    default="ug/ml"
+    path="covid_care_daily_sheet/lab_results/d-dimer/analyte_result:0"
+    label="D-Dimer"
+  >
+    <mb-unit unit="ug/ml" label="ug/ml" />
+  </mb-quantity>
+  <!-- Management -->
+  <p class="mt-5 text-2xl font-bold text-gray-700">Management</p>
+  {#each medications as med, i}
+    <mb-checkbox-any
+      path={med.path}
+      label={med.code?.value || med.code}
+      bind={med.code}
+    />
+  {/each}
   <!-- Contexts -->
   <div class="hidden">
+    <mb-context
+      path="covid_care_daily_sheet/lab_results/total_wbc/analyte_name"
+      label="Analyte name"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/lab_results/d-dimer/analyte_name"
+      label="Analyte name"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/lab_results/postprandial_blood_sugar/analyte_name"
+      label="Analyte name"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/lab_results/test_name"
+      label="Test name"
+      data="Covid Screening Panel"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/lab_results/fasting_glucose:0/analyte_name"
+      label="Analyte name"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/lab_results/crp/analyte_name"
+      label="Analyte name"
+    />
     <mb-context path="covid_care_daily_sheet/category" />
     <mb-context path="covid_care_daily_sheet/context/start_time" />
     <mb-context path="covid_care_daily_sheet/context/setting" />
@@ -266,22 +408,171 @@
     <mb-context path="covid_care_daily_sheet/lab_results/subject" />
     <mb-context path="covid_care_daily_sheet/lab_results/language" />
     <mb-context path="covid_care_daily_sheet/lab_results/encoding" />
-    <mb-context path="covid_care_daily_sheet/medication_management:0/subject" />
     <mb-context
-      path="covid_care_daily_sheet/medication_management:0/language"
+      path="covid_care_daily_sheet/management/dexamethasone/subject"
     />
     <mb-context
-      path="covid_care_daily_sheet/medication_management:0/encoding"
-    />
-    <mb-context path="covid_care_daily_sheet/medication_management:0/time" />
-    <mb-context
-      path="covid_care_daily_sheet/medication_management:0/ism_transition/careflow_step"
+      path="covid_care_daily_sheet/management/dexamethasone/language"
     />
     <mb-context
-      path="covid_care_daily_sheet/medication_management:0/ism_transition/current_state"
+      path="covid_care_daily_sheet/management/dexamethasone/encoding"
+    />
+    <mb-context path="covid_care_daily_sheet/management/dexamethasone/time" />
+    <mb-context
+      path="covid_care_daily_sheet/management/dexamethasone/ism_transition/careflow_step"
     />
     <mb-context
-      path="covid_care_daily_sheet/medication_management:0/ism_transition/transition"
+      path="covid_care_daily_sheet/management/dexamethasone/ism_transition/current_state"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/dexamethasone/ism_transition/transition"
+    />
+    <mb-context path="covid_care_daily_sheet/management/enoxaparin/subject" />
+    <mb-context path="covid_care_daily_sheet/management/enoxaparin/language" />
+    <mb-context path="covid_care_daily_sheet/management/enoxaparin/encoding" />
+    <mb-context path="covid_care_daily_sheet/management/enoxaparin/time" />
+    <mb-context
+      path="covid_care_daily_sheet/management/enoxaparin/ism_transition/careflow_step"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/enoxaparin/ism_transition/current_state"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/enoxaparin/ism_transition/transition"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/tab_paracetamol/subject"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/tab_paracetamol/language"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/tab_paracetamol/encoding"
+    />
+    <mb-context path="covid_care_daily_sheet/management/tab_paracetamol/time" />
+    <mb-context
+      path="covid_care_daily_sheet/management/tab_paracetamol/ism_transition/careflow_step"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/tab_paracetamol/ism_transition/current_state"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/tab_paracetamol/ism_transition/transition"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/tab_co-amoxyclav/subject"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/tab_co-amoxyclav/language"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/tab_co-amoxyclav/encoding"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/tab_co-amoxyclav/time"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/tab_co-amoxyclav/ism_transition/careflow_step"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/tab_co-amoxyclav/ism_transition/current_state"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/tab_co-amoxyclav/ism_transition/transition"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/budesonide_puffs/subject"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/budesonide_puffs/language"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/budesonide_puffs/encoding"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/budesonide_puffs/time"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/budesonide_puffs/ism_transition/careflow_step"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/budesonide_puffs/ism_transition/current_state"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/budesonide_puffs/ism_transition/transition"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/steam_inhalation/subject"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/steam_inhalation/language"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/steam_inhalation/encoding"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/steam_inhalation/time"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/steam_inhalation/ism_transition/careflow_step"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/steam_inhalation/ism_transition/current_state"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/steam_inhalation/ism_transition/transition"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/deep_breathing_exercises/subject"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/deep_breathing_exercises/language"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/deep_breathing_exercises/encoding"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/deep_breathing_exercises/time"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/deep_breathing_exercises/ism_transition/careflow_step"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/deep_breathing_exercises/ism_transition/current_state"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/deep_breathing_exercises/ism_transition/transition"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/oxygen_therapy/subject"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/oxygen_therapy/language"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/oxygen_therapy/encoding"
+    />
+    <mb-context path="covid_care_daily_sheet/management/oxygen_therapy/time" />
+    <mb-context
+      path="covid_care_daily_sheet/management/oxygen_therapy/ism_transition/careflow_step"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/oxygen_therapy/ism_transition/current_state"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/oxygen_therapy/ism_transition/transition"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/other_regular_medication/time"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/other_regular_medication/subject"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/other_regular_medication/language"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/management/other_regular_medication/encoding"
     />
     <mb-context path="covid_care_daily_sheet/composer" />
     <mb-context path="covid_care_daily_sheet/language" />
