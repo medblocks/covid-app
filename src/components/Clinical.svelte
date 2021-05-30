@@ -13,7 +13,30 @@
   const getCompositions = (ehrId: string, templateId: string) => ({
     q: `SELECT c/uid/value as uid, c/context/start_time/value as time from EHR e CONTAINS COMPOSITION c [openEHR-EHR-COMPOSITION.encounter.v1] where c/archetype_details/template_id/value='${templateId}' AND e/ehr_id/value='${ehrId}' ORDER BY c/context/start_time/value DESC`,
   });
-
+ const dataEdit=(data)=>{
+if(data===null){
+  return '-';
+}if(data?.magnitude){
+  if(data?.units){
+  return data?.magnitude+data?.units;
+  }else{
+    return data?.magnitude;
+  }
+}if(data?.numerator){
+  return data?.numerator+'%'
+}if(data?.items){
+ return data?.items[0].value.magnitude+data?.items[0].value.units;
+}
+if(data?.name){
+  if(data?.name.value){
+    return 'Yes';
+  }else return 'No';
+}
+if((new Date(data)).getDate()){
+  return new Date(data).toDateString()
+}
+    
+}
   let dailySheets = [];
   let dailyData={};
   let columns=[];
@@ -45,7 +68,8 @@
       rows: dailyDataRequest.data?.rows,
     };
     columns=dailyDataRequest.data?.columns;
-    rows=dailyDataRequest.data?.rows
+    rows=dailyDataRequest.data?.rows;
+   
   });
 </script>
 
@@ -116,11 +140,12 @@
  {/each}</tr>
 {#each rows as row}
 <tr>{#each row as r}
-<td class="px-5 py-5 border border-gray-200 bg-white text-sm">{r?.magnitude}</td>
+<td class="px-5 py-5 border border-gray-200 bg-white text-sm">{dataEdit(r)}</td>
+
 {/each}</tr>
  {/each}
  
   
   
 </table>
-</div>
+</div>{console.log(rows)}
