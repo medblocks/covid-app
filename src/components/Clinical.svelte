@@ -15,7 +15,9 @@
   });
 
   let dailySheets = [];
-  let dailyData = {};
+  let dailyData={};
+  let columns=[];
+  let rows=[];
   onMount(async () => {
     try {
       await openehr.get(`/openehr/v1/ehr/${ehrId}`);
@@ -42,6 +44,8 @@
       columns: dailyDataRequest.data?.columns,
       rows: dailyDataRequest.data?.rows,
     };
+    columns=dailyDataRequest.data?.columns;
+    rows=dailyDataRequest.data?.rows
   });
 </script>
 
@@ -103,4 +107,20 @@
 </div>
 
 <p>Patient status</p>
-<pre>{JSON.stringify(dailyData, null, 2)}</pre>
+<!-- <pre>{JSON.stringify(dailyData, null, 2)}</pre> -->
+<div class='w-full overflow-scroll mt-2'>
+<table class="leading-normal">
+  <tr>
+ {#each columns as col}
+ <th class="px-5 py-5 border border-gray-200 bg-white text-sm">{col.name}</th>
+ {/each}</tr>
+{#each rows as row}
+<tr>{#each row as r}
+<td class="px-5 py-5 border border-gray-200 bg-white text-sm">{r?.magnitude}</td>
+{/each}</tr>
+ {/each}
+ 
+  
+  
+</table>
+</div>
