@@ -62,49 +62,6 @@
 {/if}
 
 {#if dailyData?.length > 0}
-  <p class="mt-5 text-xl font-semibold text-gray-700">
-    Daily Monitoring Sheets
-  </p>
-  <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
-    <div class="inline-block min-w-full shadow rounded-lg overflow-hidden">
-      <table class="min-w-full leading-normal">
-        <tbody>
-          {#each dailyData as sheet}
-            <tr>
-              <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                <p class="text-gray-900 whitespace-no-wrap">
-                  <span class="capitalize"
-                    ><sl-relative-time date={sheet.get("time")} /></span
-                  >
-                </p>
-              </td>
-              <td
-                class="px-5 py-5 space-x-5 border-b border-gray-200 bg-white text-sm"
-              >
-                <sl-format-date
-                  month="long"
-                  day="numeric"
-                  hour="numeric"
-                  minute="numeric"
-                  date={sheet.get("time")}
-                />
-              </td>
-              <td
-                class="px-5 py-5 space-x-5 border-b border-gray-200 bg-white text-sm text-right"
-              >
-                <Link
-                  to={`clinical/${ehrId}/daily/${sheet.get("uid")}`}
-                  class="text-blue-600 hover:text-blue-900"
-                >
-                  Edit/View
-                </Link>
-              </td>
-            </tr>
-          {/each}
-        </tbody>
-      </table>
-    </div>
-  </div>
   <p class="my-5 text-xl font-semibold text-gray-700">Tabular Data</p>
   <div role="region" tabindex="0" class="max-w-full overflow-auto">
     <table class="min-w-full leading-normal table-fixed">
@@ -159,6 +116,49 @@
       <NewsChart data={scores} />
     </div>
   {/if}
+  <p class="mt-5 text-xl font-semibold text-gray-700">
+    Daily Monitoring Sheets
+  </p>
+  <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
+    <div class="inline-block min-w-full shadow rounded-lg overflow-hidden">
+      <table class="min-w-full leading-normal">
+        <tbody>
+          {#each dailyData as sheet}
+            <tr>
+              <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                <p class="text-gray-900 whitespace-no-wrap">
+                  <span class="capitalize"
+                    >Updated <sl-relative-time date={sheet.get("time")} /></span
+                  >
+                </p>
+              </td>
+              <td
+                class="px-5 py-5 space-x-5 border-b border-gray-200 bg-white text-sm"
+              >
+                <sl-format-date
+                  month="long"
+                  day="numeric"
+                  hour="numeric"
+                  minute="numeric"
+                  date={sheet.get("time")}
+                />
+              </td>
+              <td
+                class="px-5 py-5 space-x-5 border-b border-gray-200 bg-white text-sm text-right"
+              >
+                <Link
+                  to={`clinical/${ehrId}/daily/${sheet.get("uid")}`}
+                  class="text-blue-600 hover:text-blue-900"
+                >
+                  Edit/View
+                </Link>
+              </td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+  </div>
 {:else}
   <p class="mt-5 text-xl text-gray-700">
     Please click on the above buttons to start entering data.

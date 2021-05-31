@@ -16,7 +16,13 @@
     const r = await fhir.get("/Patient");
     patients = r.data?.entry || [];
     console.log(patients);
-    covidRes = await getCovidResults(patients.map((p) => p.resource.id));
+    const aql = await getCovidResults(patients.map((p) => p.resource.id));
+    aql.forEach((row) => {
+      if (!covidRes[row.get("id")]) {
+        covidRes[row.get("id")] = row.get("result")?.value;
+      }
+    });
+    console.log(covidRes);
   });
 </script>
 
@@ -63,20 +69,20 @@
 
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
               <span
-                class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight"
+                class="relative inline-block px-3 py-1 font-semibold leading-tight"
               >
                 {#if covidRes[patient.resource.id] === "Positive"}
                   <span
                     aria-hidden="true"
-                    class="absolute inset-0 bg-red-400 opacity-50 rounded-full"
+                    class="absolute inset-0 bg-red-400  opacity-50 rounded-full"
                   />
-                  <span class="relative"> covid +ve </span>
+                  <span class="relative text-green-900"> covid +ve </span>
                 {:else if covidRes[patient.resource.id] === "Negative"}
                   <span
                     aria-hidden="true"
-                    class="absolute inset-0 bg-gray-400 opacity-50 rounded-full"
+                    class="absolute inset-0 bg-gray-400  opacity-50 rounded-full"
                   />
-                  <span class="relative"> covid -ve </span>
+                  <span class="relative text-gray-700"> covid -ve </span>
                 {/if}
               </span>
             </td>
