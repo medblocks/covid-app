@@ -55,62 +55,74 @@
     <h1 class="text-2xl">{patient.name}</h1>
     <p>{patient.age} {patient.genderShort}</p>
   </div>
-  <div class="mt-4">
+  <div class="mt-4 flex gap-3">
     <Link to={`clinical/${ehrId}/daily`}>
       <sl-button type="primary">
         Daily Monitoring <sl-icon slot="suffix" name="plus-circle-fill" />
       </sl-button>
     </Link>
+    <Link to={`clinical/${ehrId}/covid`}>
+      <sl-button type="info">
+        Covid Report <sl-icon slot="suffix" name="plus-circle-fill" />
+      </sl-button>
+    </Link>
   </div>
 {/if}
 
-<p class="mt-5 text-2xl text-gray-700">Daily Monitoring Sheets</p>
-<div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
-  <div class="inline-block min-w-full shadow rounded-lg overflow-hidden">
-    <table class="min-w-full leading-normal">
-      <tbody>
-        {#each dailySheets as sheet}
-          <tr>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              <p class="text-gray-900 whitespace-no-wrap">
-                <span class="capitalize"
-                  ><sl-relative-time date={sheet[1]} /></span
-                >
-              </p>
-            </td>
-            <td
-              class="px-5 py-5 space-x-5 border-b border-gray-200 bg-white text-sm"
-            >
-              <sl-format-date
-                month="long"
-                day="numeric"
-                hour="numeric"
-                minute="numeric"
-                date={sheet[1]}
-              />
-            </td>
-            <td
-              class="px-5 py-5 space-x-5 border-b border-gray-200 bg-white text-sm text-right"
-            >
-              <Link
-                to={`clinical/${ehrId}/daily/${sheet[0]}`}
-                class="text-blue-600 hover:text-blue-900"
+{#if dailySheets?.length > 0}
+  <p class="mt-5 text-xl font-semibold text-gray-700">
+    Daily Monitoring Sheets
+  </p>
+  <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
+    <div class="inline-block min-w-full shadow rounded-lg overflow-hidden">
+      <table class="min-w-full leading-normal">
+        <tbody>
+          {#each dailySheets as sheet}
+            <tr>
+              <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                <p class="text-gray-900 whitespace-no-wrap">
+                  <span class="capitalize"
+                    ><sl-relative-time date={sheet[1]} /></span
+                  >
+                </p>
+              </td>
+              <td
+                class="px-5 py-5 space-x-5 border-b border-gray-200 bg-white text-sm"
               >
-                Edit/View
-              </Link>
-            </td>
-          </tr>
-        {/each}
-      </tbody>
-    </table>
+                <sl-format-date
+                  month="long"
+                  day="numeric"
+                  hour="numeric"
+                  minute="numeric"
+                  date={sheet[1]}
+                />
+              </td>
+              <td
+                class="px-5 py-5 space-x-5 border-b border-gray-200 bg-white text-sm text-right"
+              >
+                <Link
+                  to={`clinical/${ehrId}/daily/${sheet[0]}`}
+                  class="text-blue-600 hover:text-blue-900"
+                >
+                  Edit/View
+                </Link>
+              </td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
-<p class="my-5 text-2xl text-gray-700">Early Warning Score Monitoring</p>
-{#if scores}
-  <div class="max-w-2xl">
-    <NewsChart data={scores} />
-  </div>
+  <p class="mt-5 text-xl font-semibold text-gray-700">
+    Early Warning Score Monitoring
+  </p>
+  {#if scores}
+    <div class="max-w-2xl my-5">
+      <NewsChart data={scores} />
+    </div>
+  {/if}
+{:else}
+  <p class="mt-5 text-xl text-gray-700">
+    Please click on the above buttons to start entering data.
+  </p>
 {/if}
-
-<p>Patient status</p>
-
