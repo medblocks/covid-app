@@ -18,7 +18,14 @@ if(data===null){
   return '-';
 }if(data?.magnitude){
   if(data?.units){
-  return data?.magnitude+data?.units;
+if(data?.units==="[degF]"){
+  return data?.magnitude+"°F";
+}else if(data?.units==='1/mm3'){
+  return data?.magnitude+'/mm3';
+}else if(data?.units==='mm[Hg]'){
+  return data?.magnitude+'mmHg';
+}
+  
   }else{
     return data?.magnitude;
   }
