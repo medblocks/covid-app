@@ -8,6 +8,7 @@
   let patientdata;
   let patient;
   import "@shoelace-style/shoelace/dist/components/format-date/format-date";
+  import NewsChart from "./NEWSChart.svelte";
   $: patient = patientProxy(patientdata);
 
   const getCompositions = (ehrId: string, templateId: string) => ({
@@ -15,7 +16,8 @@
   });
 
   let dailySheets = [];
-  let dailyData = {};
+  let dailyData: any = {};
+  let scores: any = null;
   onMount(async () => {
     try {
       await openehr.get(`/openehr/v1/ehr/${ehrId}`);
@@ -42,6 +44,9 @@
       columns: dailyDataRequest.data?.columns,
       rows: dailyDataRequest.data?.rows,
     };
+    scores = dailyData?.rows
+      .map((row) => ({ score: row[3]?.magnitude, date: row[row.length - 1] }))
+      .filter((row) => row.score != null);
   });
 </script>
 
@@ -58,7 +63,6 @@
     </Link>
   </div>
 {/if}
-
 
 <p class="mt-5 text-2xl text-gray-700">Daily Monitoring Sheets</p>
 <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
@@ -101,6 +105,12 @@
     </table>
   </div>
 </div>
+<p class="my-5 text-2xl text-gray-700">Early Warning Score Monitoring</p>
+{#if scores}
+  <div class="max-w-2xl">
+    <NewsChart data={scores} />
+  </div>
+{/if}
 
 <p>Patient status</p>
-<pre>{JSON.stringify(dailyData, null, 2)}</pre>
+
