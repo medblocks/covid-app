@@ -13,43 +13,77 @@
   const getCompositions = (ehrId: string, templateId: string) => ({
     q: `SELECT c/uid/value as uid, c/context/start_time/value as time from EHR e CONTAINS COMPOSITION c [openEHR-EHR-COMPOSITION.encounter.v1] where c/archetype_details/template_id/value='${templateId}' AND e/ehr_id/value='${ehrId}' ORDER BY c/context/start_time/value DESC`,
   });
- const dataEdit=(data)=>{
-if(data===null){
-  return '-';
-}if(data?.magnitude){
-  if(data?.units){
-if(data?.units==="[degF]"){
-  return data?.magnitude+"°F";
-}else if(data?.units==='1/mm3'){
-  return data?.magnitude+'/mm3';
-}else if(data?.units==='mm[Hg]'){
-  return data?.magnitude+'mmHg';
-}else if(data?.units==='/min'){
-  return data?.magnitude+'/min';
-}
-  }else{
-    return data?.magnitude;
-  }
-}if(data?.numerator){
-  return data?.numerator+'%'
-}if(data?.items){
-  console.log(data?.items[0].value.magnitude+data?.items[0].value.units);
- return data?.items[0].value.magnitude+data?.items[0].value.units;
-}
-if(data?.name){
-  if(data?.name.value){
-    return 'Yes';
-  }else return 'No';
-}
-if((new Date(data)).getDate()){
-  return new Date(data).toDateString()
-}
-    
-}
+  const allCompositions = (ehrId) => {
+    const query = `
+    SELECT 
+    c/context/start_time/value as time, 
+    c/uid/value as uid, 
+    c/content[openEHR-EHR-SECTION.adhoc.v1,'Vitals']/items[openEHR-EHR-OBSERVATION.body_temperature.v2]/data[at0002]/events[at0003]/data[at0001]/items[at0004]/value as Temperature, 
+    c/content[openEHR-EHR-SECTION.adhoc.v1,'Vitals']/items[openEHR-EHR-OBSERVATION.pulse.v2]/data[at0002]/events[at0003]/data[at0001]/items[at0004]/value as Pulse,
+    c/content[openEHR-EHR-SECTION.adhoc.v1,'Vitals']/items[openEHR-EHR-OBSERVATION.blood_pressure.v2]/data[at0001]/events[at0006]/data[at0003]/items[at0004]/value as Systolic_BP, 
+    c/content[openEHR-EHR-SECTION.adhoc.v1,'Vitals']/items[openEHR-EHR-OBSERVATION.blood_pressure.v2]/data[at0001]/events[at0006]/data[at0003]/items[at0005]/value as Diastolic_BP, 
+    c/content[openEHR-EHR-SECTION.adhoc.v1,'Vitals']/items[openEHR-EHR-OBSERVATION.news_uk_rcp.v1]/data[at0001]/events[at0002]/data[at0003]/items[at0028]/value as EWS, 
+    c/content[openEHR-EHR-SECTION.adhoc.v1,'Vitals']/items[openEHR-EHR-OBSERVATION.pulse_oximetry.v1]/data[at0001]/events[at0002]/data[at0003]/items[at0006]/value as spO2, 
+    c/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Lab Results']/data[at0001]/events[at0002]/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Fasting Glucose']/items[at0001]/value as Glucose_Fasting, 
+    c/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Lab Results']/data[at0001]/events[at0002]/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Postprandial Blood Sugar']/items[at0001]/value as Glucose_Postprandial, 
+    c/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Lab Results']/data[at0001]/events[at0002]/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'CRP']/items[at0001]/value as CRP, 
+    c/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Lab Results']/data[at0001]/events[at0002]/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Total WBC']/items[at0001]/value as WBC, 
+    c/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Lab Results']/data[at0001]/events[at0002]/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'D-Dimer']/items[at0001]/value as D_Dimer, 
+    c/content[openEHR-EHR-SECTION.adhoc.v1,'Management']/items[openEHR-EHR-ACTION.medication.v1,'Dexamethasone'] as Dexamethasone, 
+    c/content[openEHR-EHR-SECTION.adhoc.v1,'Management']/items[openEHR-EHR-ACTION.medication.v1,'Enoxaparin'] as Enoxiparin, 
+    c/content[openEHR-EHR-SECTION.adhoc.v1,'Management']/items[openEHR-EHR-ACTION.medication.v1,'Tab Paracetamol'] as Paracetamol, 
+    c/content[openEHR-EHR-SECTION.adhoc.v1,'Management']/items[openEHR-EHR-ACTION.medication.v1,'Tab Co-Amoxyclav'] as Coamoxiclav, 
+    c/content[openEHR-EHR-SECTION.adhoc.v1,'Management']/items[openEHR-EHR-ACTION.medication.v1,'Budesonide Puffs'] as Budesonide, 
+    c/content[openEHR-EHR-SECTION.adhoc.v1,'Management']/items[openEHR-EHR-ACTION.procedure.v1,'Steam Inhalation'] as Steam, 
+    c/content[openEHR-EHR-SECTION.adhoc.v1,'Management']/items[openEHR-EHR-ACTION.procedure.v1,'Deep Breathing Exercises'] as Deep_Breathing, 
+    c/content[openEHR-EHR-SECTION.adhoc.v1,'Management']/items[openEHR-EHR-ACTION.procedure.v1,'Oxygen Therapy'] as Oxygen_Therapy, 
+    c/content[openEHR-EHR-SECTION.adhoc.v1,'Management']/items[openEHR-EHR-OBSERVATION.medication_statement.v0,'Other regular medication'] as regularMeds 
+    from EHR e CONTAINS COMPOSITION c [openEHR-EHR-COMPOSITION.encounter.v1]  
+    where c/archetype_details/template_id/value='MCS.CovidCare.DailySheet.v0.1' 
+    AND e/ehr_id/value='${ehrId}'
+    ORDER BY time DESC
+    `;
+  };
+  const dataEdit = (data) => {
+    if (data === null) {
+      return "-";
+    }
+    if (data?.magnitude) {
+      if (data?.units) {
+        if (data?.units === "[degF]") {
+          return data?.magnitude + "°F";
+        } else if (data?.units === "1/mm3") {
+          return data?.magnitude + "/mm3";
+        } else if (data?.units === "mm[Hg]") {
+          return data?.magnitude + "mmHg";
+        } else if (data?.units === "/min") {
+          return data?.magnitude + "/min";
+        }
+      } else {
+        return data?.magnitude;
+      }
+    }
+    if (data?.numerator) {
+      return data?.numerator + "%";
+    }
+    if (data?.items) {
+      console.log({ items: data });
+      console.log(data?.items[0].value.magnitude + data?.items[0].value.units);
+      return data?.items[0].value.magnitude + " " + data?.items[0].value.units;
+    }
+    if (data?.name) {
+      if (data?.name.value) {
+        return "Yes";
+      } else return "No";
+    }
+    if (new Date(data).getDate()) {
+      return new Date(data).toDateString();
+    }
+  };
   let dailySheets = [];
-  let dailyData={};
-  let columns=[];
-  let rows=[];
+  let dailyData = {};
+  let columns = [];
+  let rows = [];
   onMount(async () => {
     try {
       await openehr.get(`/openehr/v1/ehr/${ehrId}`);
@@ -76,9 +110,8 @@ if((new Date(data)).getDate()){
       columns: dailyDataRequest.data?.columns,
       rows: dailyDataRequest.data?.rows,
     };
-    columns=dailyDataRequest.data?.columns;
-    rows=dailyDataRequest.data?.rows;
-   
+    columns = dailyDataRequest.data?.columns;
+    rows = dailyDataRequest.data?.rows;
   });
 </script>
 
@@ -95,7 +128,6 @@ if((new Date(data)).getDate()){
     </Link>
   </div>
 {/if}
-
 
 <p class="mt-5 text-2xl text-gray-700">Daily Monitoring Sheets</p>
 <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
@@ -141,22 +173,26 @@ if((new Date(data)).getDate()){
 
 <p>Patient status</p>
 <!-- <pre>{JSON.stringify(dailyData, null, 2)}</pre> -->
-<div class='flex w-full'>
-
-  <div class='flex flex-col-reverse'>
- {#each columns as col}
- <div class="px-5 py-5 border font-bold border-gray-200 bg-white text-sm">{col.name}</div>
- {/each}</div>
- <div class='flex overflow-x-auto'>
-{#each rows as row}
-<div class='flex flex-col-reverse'>
-{#each row as r}
-<div class="px-5 py-5 border border-gray-200 bg-white text-sm">{dataEdit(r)}</div>
-
-{/each}
+<div class="flex w-full">
+  <div class="flex flex-col">
+    {#each columns as col}
+      <div
+        class="px-2 py-5 border-b font-bold border-gray-200 bg-white text-sm"
+      >
+        {col.name}
+      </div>
+    {/each}
+  </div>
+  <div class="flex overflow-x-auto">
+    {#each rows as row}
+      <div class="flex flex-col">
+        {#each row as r}
+          <div class="px-2 py-5 border-b border-gray-200 bg-white text-sm">
+            {dataEdit(r)}
+          </div>
+        {/each}
+      </div>
+    {/each}
+  </div>
 </div>
-
- {/each}
- 
-</div>
-</div>{console.log(rows)}
+{console.log(rows)}
