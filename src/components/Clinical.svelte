@@ -9,15 +9,16 @@
   let patient;
   import "@shoelace-style/shoelace/dist/components/format-date/format-date";
   import NewsChart from "./NEWSChart.svelte";
+  import { allCompositions } from "./aqls";
+  import { each } from "svelte/internal";
+  import { formatValue } from "./utils";
   $: patient = patientProxy(patientdata);
 
-  const getCompositions = (ehrId: string, templateId: string) => ({
-    q: `SELECT c/uid/value as uid, c/context/start_time/value as time from EHR e CONTAINS COMPOSITION c [openEHR-EHR-COMPOSITION.encounter.v1] where c/archetype_details/template_id/value='${templateId}' AND e/ehr_id/value='${ehrId}' ORDER BY c/context/start_time/value DESC`,
-  });
-
-  let dailySheets = [];
-  let dailyData: any = {};
-  let scores: any = null;
+  let dailyData: Map<string, any>[] = [];
+  let scores: any = [];
+  const formatHeader = (string: string) => {
+    return string.replaceAll("_", " ");
+  };
   onMount(async () => {
     try {
       await openehr.get(`/openehr/v1/ehr/${ehrId}`);
@@ -30,22 +31,13 @@
     }
     const fhirDemographics = await fhir.get(`/Patient/${ehrId}`);
     patientdata = fhirDemographics.data;
-    const compositions = await openehr.post(
-      `/openehr/v1/query/aql`,
-      getCompositions(ehrId, "MCS.CovidCare.DailySheet.v0.1")
-    );
-
-    dailySheets = compositions.data?.rows;
-    const dailyDataRequest = await openehr.post(
-      `/openehr/v1/query/org.openehr::coviddaily`,
-      { query_parameters: { ehr_id: ehrId } }
-    );
-    dailyData = {
-      columns: dailyDataRequest.data?.columns,
-      rows: dailyDataRequest.data?.rows,
-    };
-    scores = dailyData?.rows
-      .map((row) => ({ score: row[3]?.magnitude, date: row[row.length - 1] }))
+    dailyData = await allCompositions(ehrId);
+    console.log(dailyData);
+    scores = dailyData
+      .map((row) => ({
+        score: row.get("EWS")?.magnitude,
+        date: row.get("time"),
+      }))
       .filter((row) => row.score != null);
   });
 </script>
@@ -69,7 +61,7 @@
   </div>
 {/if}
 
-{#if dailySheets?.length > 0}
+{#if dailyData?.length > 0}
   <p class="mt-5 text-xl font-semibold text-gray-700">
     Daily Monitoring Sheets
   </p>
@@ -77,12 +69,12 @@
     <div class="inline-block min-w-full shadow rounded-lg overflow-hidden">
       <table class="min-w-full leading-normal">
         <tbody>
-          {#each dailySheets as sheet}
+          {#each dailyData as sheet}
             <tr>
               <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                 <p class="text-gray-900 whitespace-no-wrap">
                   <span class="capitalize"
-                    ><sl-relative-time date={sheet[1]} /></span
+                    ><sl-relative-time date={sheet.get("time")} /></span
                   >
                 </p>
               </td>
@@ -94,14 +86,14 @@
                   day="numeric"
                   hour="numeric"
                   minute="numeric"
-                  date={sheet[1]}
+                  date={sheet.get("time")}
                 />
               </td>
               <td
                 class="px-5 py-5 space-x-5 border-b border-gray-200 bg-white text-sm text-right"
               >
                 <Link
-                  to={`clinical/${ehrId}/daily/${sheet[0]}`}
+                  to={`clinical/${ehrId}/daily/${sheet.get("uid")}`}
                   class="text-blue-600 hover:text-blue-900"
                 >
                   Edit/View
@@ -113,10 +105,56 @@
       </table>
     </div>
   </div>
-  <p class="mt-5 text-xl font-semibold text-gray-700">
-    Early Warning Score Monitoring
-  </p>
+  <p class="my-5 text-xl font-semibold text-gray-700">Tabular Data</p>
+  <div role="region" tabindex="0" class="max-w-full overflow-auto">
+    <table class="min-w-full leading-normal table-fixed">
+      <thead>
+        <tr>
+          <td
+            class="px-5 py-5 border-b border-gray-200 bg-white font-bold text-gray-600"
+          >
+            Date
+          </td>
+          {#each dailyData as data}
+            <td
+              class="m-10 w-10 text-center border-b border-r border-gray-200 bg-white font-semibold text-gray-800"
+            >
+              <sl-format-date
+                month="long"
+                day="numeric"
+                date={data.get("time")}
+              />
+              <br />
+              <sl-format-date
+                hour="numeric"
+                minute="numeric"
+                date={data.get("time")}
+              />
+            </td>
+          {/each}
+        </tr>
+      </thead>
+      <tbody>
+        {#each [...dailyData[0].keys()].slice(2, -1) as key}
+          <tr>
+            <td
+              class="px-5 py-5 border-b border-gray-200 bg-white font-bold text-gray-600"
+              >{key.replaceAll("_", " ")}</td
+            >
+            {#each dailyData as data}
+              <td class="px-5 py-5 border-b border-r border-gray-200 bg-white">
+                {formatValue(data.get(key))}
+              </td>
+            {/each}
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
   {#if scores}
+    <p class="mt-5 text-xl font-semibold text-gray-700">
+      Early Warning Score Monitoring
+    </p>
     <div class="max-w-2xl my-5">
       <NewsChart data={scores} />
     </div>

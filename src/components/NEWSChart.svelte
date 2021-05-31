@@ -52,12 +52,12 @@
     Tooltip
   );
 
-  export let data;
+  export let data: { score: number; date: string }[];
   import { onMount } from "svelte";
+  import { relativeTime } from "./relativeTime";
   let chart;
   let ctx;
   onMount(() => {
-    console.log(data);
     const chartElement = document.getElementById(
       "myChart"
     ) as HTMLCanvasElement;
@@ -65,17 +65,7 @@
     chart = new Chart(ctx, {
       type: "line",
       data: {
-        labels: data
-          .map((r) => r.date)
-          .map((date) =>
-            new Intl.DateTimeFormat("en-GB", {
-              month: "long",
-              day: "numeric",
-              hour: "numeric",
-              minute: "numeric",
-              hour12: true,
-            }).format(new Date(date))
-          ),
+        labels: data.map((r) => r.date).map(relativeTime),
         datasets: [
           {
             data: data.map((r) => r.score),
