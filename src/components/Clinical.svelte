@@ -24,14 +24,16 @@ if(data?.units==="[degF]"){
   return data?.magnitude+'/mm3';
 }else if(data?.units==='mm[Hg]'){
   return data?.magnitude+'mmHg';
+}else if(data?.units==='/min'){
+  return data?.magnitude+'/min';
 }
-  
   }else{
     return data?.magnitude;
   }
 }if(data?.numerator){
   return data?.numerator+'%'
 }if(data?.items){
+  console.log(data?.items[0].value.magnitude+data?.items[0].value.units);
  return data?.items[0].value.magnitude+data?.items[0].value.units;
 }
 if(data?.name){
@@ -139,20 +141,22 @@ if((new Date(data)).getDate()){
 
 <p>Patient status</p>
 <!-- <pre>{JSON.stringify(dailyData, null, 2)}</pre> -->
-<div class='w-full overflow-scroll mt-2'>
-<table class="leading-normal">
-  <tr>
- {#each columns as col}
- <th class="px-5 py-5 border border-gray-200 bg-white text-sm">{col.name}</th>
- {/each}</tr>
-{#each rows as row}
-<tr>{#each row as r}
-<td class="px-5 py-5 border border-gray-200 bg-white text-sm">{dataEdit(r)}</td>
+<div class='flex w-full'>
 
-{/each}</tr>
+  <div class='flex flex-col-reverse'>
+ {#each columns as col}
+ <div class="px-5 py-5 border font-bold border-gray-200 bg-white text-sm">{col.name}</div>
+ {/each}</div>
+ <div class='flex overflow-x-auto'>
+{#each rows as row}
+<div class='flex flex-col-reverse'>
+{#each row as r}
+<div class="px-5 py-5 border border-gray-200 bg-white text-sm">{dataEdit(r)}</div>
+
+{/each}
+</div>
+
  {/each}
  
-  
-  
-</table>
+</div>
 </div>{console.log(rows)}
