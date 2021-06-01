@@ -59,7 +59,7 @@
   let element;
   let ctx;
   export let label: string;
-  export let color: string = "rgb(255, 99, 132)"
+  export let color: string = "rgb(255, 99, 132)";
   onMount(() => {
     const chartElement = element as HTMLCanvasElement;
     ctx = chartElement.getContext("2d");

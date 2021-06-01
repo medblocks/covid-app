@@ -9,6 +9,7 @@
   import { openehr } from "../utils/openehr";
   import { navigate } from "svelte-routing";
   import { onMount } from "svelte";
+  import PatientBanner from "./PatientBanner.svelte";
   export let compositionId: string | undefined = undefined;
   export let ehrId: string;
   export let templateId: string = "MCS.CovidCare.DailySheet.v0.2";

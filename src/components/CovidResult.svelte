@@ -2,7 +2,6 @@
   import { openehr } from "../utils/openehr";
   import { onMount } from "svelte";
   import { navigate } from "svelte-routing";
-
   export let ehrId;
   export let compositionId;
   export let templateId = "MCS.CovidResult.v0";
@@ -46,7 +45,6 @@
 </script>
 
 <p class="my-5 text-xl font-semibold text-gray-700">Covid Status Report</p>
-
 <mb-form
   bind:this={form}
   class="flex flex-col gap-4"
