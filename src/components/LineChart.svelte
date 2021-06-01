@@ -56,11 +56,12 @@
   import { onMount } from "svelte";
   import { relativeTime } from "./relativeTime";
   let chart;
+  let element;
   let ctx;
+  export let label: string;
+  export let color: string = "rgb(255, 99, 132)"
   onMount(() => {
-    const chartElement = document.getElementById(
-      "myChart"
-    ) as HTMLCanvasElement;
+    const chartElement = element as HTMLCanvasElement;
     ctx = chartElement.getContext("2d");
     chart = new Chart(ctx, {
       type: "line",
@@ -69,9 +70,9 @@
         datasets: [
           {
             data: data.map((r) => r.score),
-            label: "Early Warning Score",
-            borderColor: "rgb(255, 99, 132)",
-            backgroundColor: "rgb(255, 99, 132)",
+            label,
+            borderColor: color,
+            backgroundColor: color,
             tension: 0.1,
           },
         ],
@@ -99,4 +100,4 @@
   });
 </script>
 
-<canvas id="myChart" width="400" height="400" />
+<canvas bind:this={element} width="400" height="400" />

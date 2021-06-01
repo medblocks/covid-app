@@ -11,7 +11,7 @@
   import { onMount } from "svelte";
   export let compositionId: string | undefined = undefined;
   export let ehrId: string;
-  export let templateId: string = "MCS.CovidCare.DailySheet.v0.1";
+  export let templateId: string = "MCS.CovidCare.DailySheet.v0.2";
 
   let form;
   let loading = false;
@@ -174,13 +174,18 @@
       <mb-quantity
         path="covid_care_daily_sheet/vitals/pulse_oximetry/any_event:0/inspired_oxygen/flow_rate"
         label="Flow rate"
-        default="ml/min"
+        default="l/min"
       >
         <mb-unit unit="ml/min" label="ml/min" />
         <mb-unit unit="l/min" label="l/min" />
       </mb-quantity>
     </div>
   {/if}
+  <mb-checkbox-any
+    path="covid_care_daily_sheet/vitals/other_risk_factors/labored_breathing:0/presence"
+    label="Labored Breathing"
+    bind={{ code: "at0018", value: "Present", terminology: "local" }}
+  />
   <!-- NEWS Score -->
 
   <!-- Auto-calculated -->
@@ -342,6 +347,25 @@
   {/each}
   <!-- Contexts -->
   <div class="hidden">
+    <mb-context
+      path="covid_care_daily_sheet/vitals/other_risk_factors/labored_breathing:0/risk_factor"
+      label="Risk factor"
+      data={"Labored Breathing"}
+    />
+    <mb-context
+      path="covid_care_daily_sheet/vitals/other_risk_factors/health_risk"
+      label="Health risk"
+      data={"Other health risks"}
+    />
+    <mb-context
+      path="covid_care_daily_sheet/vitals/other_risk_factors/subject"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/vitals/other_risk_factors/language"
+    />
+    <mb-context
+      path="covid_care_daily_sheet/vitals/other_risk_factors/encoding"
+    />
     <mb-context
       path="covid_care_daily_sheet/lab_results/total_wbc/analyte_name"
       label="Analyte name"

@@ -29,7 +29,7 @@ export const formatValue = (data) => {
       return data?.numerator + "%";
     }
   }
-  if (data?.name?.value) {
+  if (data) {
     return "Yes";
-  } else return "No";
+  }
 };
