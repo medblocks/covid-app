@@ -80,6 +80,7 @@ if((new Date(data)).getDate()){
     rows=dailyDataRequest.data?.rows;
    
   });
+
 </script>
 
 {#if patient}
@@ -141,17 +142,17 @@ if((new Date(data)).getDate()){
 
 <p>Patient status</p>
 <!-- <pre>{JSON.stringify(dailyData, null, 2)}</pre> -->
-<div class='flex w-full'>
+<div style='max-height: 400px;' class='w-full overflow-y-scroll'>
 
-  <div class='flex flex-col-reverse'>
- {#each columns as col}
- <div class="px-5 py-5 border font-bold border-gray-200 bg-white text-sm">{col.name}</div>
+  <div class='flex float-left flex-col-reverse sticky left-0 z-10'>
+ {#each columns as col,i}
+ <div class={`px-5 py-5 border font-bold border-gray-200 bg-white text-sm ${columns.length-1===i?"sticky top-0":''}`}>{col.name}</div>
  {/each}</div>
- <div class='flex overflow-x-auto'>
+ <div class='flex'>
 {#each rows as row}
 <div class='flex flex-col-reverse'>
-{#each row as r}
-<div class="px-5 py-5 border border-gray-200 bg-white text-sm">{dataEdit(r)}</div>
+{#each row as r,i}
+<div class={`px-5 py-5 border border-gray-200 bg-white text-sm ${row.length-1===i?'sticky top-0':''}`}>{dataEdit(r)}</div>
 
 {/each}
 </div>
@@ -159,4 +160,18 @@ if((new Date(data)).getDate()){
  {/each}
  
 </div>
-</div>{console.log(rows)}
+</div>
+<!-- <table>
+ 
+  <tr>
+      {#each rows as row}{#each columns as col}<th scope='row'>{col.name}</th>
+      {#each  row as r}
+  <td>{dataEdit(r)}</td>
+    {/each}
+    {/each}
+     
+     {/each}
+   
+  </tr>
+  
+</table> -->
