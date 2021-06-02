@@ -33,7 +33,6 @@ if(data?.units==="[degF]"){
 }if(data?.numerator){
   return data?.numerator+'%'
 }if(data?.items){
-  console.log(data?.items[0].value.magnitude+data?.items[0].value.units);
  return data?.items[0].value.magnitude+data?.items[0].value.units;
 }
 if(data?.name){
@@ -42,6 +41,7 @@ if(data?.name){
   }else return 'No';
 }
 if((new Date(data)).getDate()){
+  console.log(data)
   return new Date(data).toDateString()
 }
     
@@ -141,37 +141,34 @@ if((new Date(data)).getDate()){
 </div>
 
 <p>Patient status</p>
-<!-- <pre>{JSON.stringify(dailyData, null, 2)}</pre> -->
-<div style='max-height: 400px;' class='w-full overflow-y-scroll'>
-
-  <div class='flex float-left flex-col-reverse sticky left-0 z-10'>
- {#each columns as col,i}
- <div class={`px-5 py-5 border font-bold border-gray-200 bg-white text-sm ${columns.length-1===i?"sticky top-0":''}`}>{col.name}</div>
- {/each}</div>
- <div class='flex'>
-{#each rows as row}
-<div class='flex flex-col-reverse'>
-{#each row as r,i}
-<div class={`px-5 py-5 border border-gray-200 bg-white text-sm ${row.length-1===i?'sticky top-0':''}`}>{dataEdit(r)}</div>
-
-{/each}
-</div>
-
- {/each}
+<div class='overflow-x-auto'>
+<table class='min-w-full leading-normal relative'>
+ <tr>
+   <th class="px-5 py-5 border border-gray-200 bg-white text-sm sticky left-0 top-0 z-10">time</th>
+  {#each rows as row}
+      {#each row as r,i}
+      {#if row.length-1===i}<td class="px-5 py-5 border border-gray-200 bg-white text-sm sticky top-0 left-0">{dataEdit(r)}</td>
+      {/if}
+      {/each}
+      {/each}
+ </tr>
  
-</div>
-</div>
-<!-- <table>
+       {#each columns as col,j}<tr> {#if col.name!=='time'}<th class="px-5 py-5 border border-gray-200 bg-white text-sm sticky left-0" scope='row'>{col.name}</th>{/if}{#each rows as row}
+      {#each  row as r,i}
+  {#if row.length-1!==i}
+{#if i===j}
+
+  <td class="px-5 py-5 border border-gray-200 bg-white text-sm">{dataEdit(r)}</td>
  
-  <tr>
-      {#each rows as row}{#each columns as col}<th scope='row'>{col.name}</th>
-      {#each  row as r}
-  <td>{dataEdit(r)}</td>
-    {/each}
-    {/each}
-     
-     {/each}
-   
-  </tr>
+  {/if}
+  {/if}
   
-</table> -->
+    {/each}
+    {/each}
+   
+     
+   
+ </tr>{/each}
+  
+</table>
+</div>
