@@ -5,34 +5,31 @@
   import "@shoelace-style/shoelace/dist/components/relative-time/relative-time";
   import { patientProxy } from "./patientProxy";
   import { getCovidResults } from "./aqls";
-  let patients: any[] = [];
-  let proxy: any;
+  export let patients: any[] = [];
+  export let label: string;
   $: proxyList = patients.map((p) => ({
     proxy: patientProxy(p.resource),
     resource: p.resource,
   }));
   let covidRes = {};
-  onMount(async () => {
-    const r = await fhir.get("/Patient");
-    patients = r.data?.entry || [];
-    console.log(patients);
-    const aql = await getCovidResults(patients.map((p) => p.resource.id));
-    aql.forEach((row) => {
-      if (!covidRes[row.get("id")]) {
-        covidRes[row.get("id")] = row.get("result")?.value;
-      }
+  $: {
+    getCovidResults(patients.map((p) => p.resource.id)).then((aql) => {
+      aql.forEach((row) => {
+        if (!covidRes[row.get("id")]) {
+          covidRes[row.get("id")] = row.get("result")?.value;
+        }
+      });
     });
-    console.log(covidRes);
-  });
+  }
 </script>
 
 <div class="flex flex-row mb-1 sm:mb-0 justify-between w-full">
-  <h2 class="text-2xl leading-tight">Patients</h2>
+  <h2 class="text-2xl leading-tight">{label}</h2>
 
   <div class="text-end">
     <form class="flex w-full max-w-sm space-x-3">
       <div class=" relative ">
-        <sl-input placeholder="Search" />
+        <sl-input placeholder="Search all patients" />
       </div>
       <sl-button>Filter</sl-button>
     </form>

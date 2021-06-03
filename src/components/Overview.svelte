@@ -42,7 +42,7 @@
   });
 </script>
 
-<div class="mt-4 flex gap-3">
+<div class="mt-4 flex gap-3 flex-wrap">
   <Link to={`daily`}>
     <sl-button type="primary">
       Daily Monitoring <sl-icon slot="suffix" name="plus-circle-fill" />
@@ -52,6 +52,9 @@
     <sl-button type="info">
       Covid Report <sl-icon slot="suffix" name="plus-circle-fill" />
     </sl-button>
+  </Link>
+  <Link to={`admission`}>
+    <sl-button type="info"> Admission </sl-button>
   </Link>
 </div>
 

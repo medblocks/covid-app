@@ -4,6 +4,7 @@
   import Assessment from "./Assessment.svelte";
   import Covid from "./CovidResult.svelte";
   import PatientBanner from "./PatientBanner.svelte";
+  import Admission from "./Admission.svelte"
   export let ehrId;
   console.log("Loaded Clinical");
 </script>
@@ -15,5 +16,6 @@
     <Route path="daily/:compositionId" component={Assessment} />
     <Route path="covid" component={Covid} />
     <Route path="covid/:compositionId" component={Covid} />
+    <Route path="admission" component={Admission}/>
   </PatientBanner>
 </Router>
