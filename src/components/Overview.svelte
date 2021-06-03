@@ -43,12 +43,12 @@
 </script>
 
 <div class="mt-4 flex gap-3">
-  <Link to={`/clinical/${ehrId}/daily`}>
+  <Link to={`daily`}>
     <sl-button type="primary">
       Daily Monitoring <sl-icon slot="suffix" name="plus-circle-fill" />
     </sl-button>
   </Link>
-  <Link to={`/clinical/${ehrId}/covid`}>
+  <Link to={`covid`}>
     <sl-button type="info">
       Covid Report <sl-icon slot="suffix" name="plus-circle-fill" />
     </sl-button>
@@ -160,7 +160,7 @@
                   class="px-5 py-5 space-x-5 border-b border-gray-200 bg-white text-sm text-right"
                 >
                   <Link
-                    to={`clinical/${ehrId}/daily/${sheet.get("uid")}`}
+                    to={`daily/${sheet.get("uid")}`}
                     class="text-blue-600 hover:text-blue-900"
                   >
                     Edit/View
