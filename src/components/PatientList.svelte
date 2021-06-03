@@ -12,7 +12,14 @@
     resource: p.resource,
   }));
   let covidRes = {};
-  $: {
+ let query='';
+ const search=(query)=>{
+   
+ let p= proxyList.filter(q=>q.proxy.name[0].toLowerCase()===query.toLowerCase())
+ console.log(p)
+  
+ }
+  $: { 
     getCovidResults(patients.map((p) => p.resource.id)).then((aql) => {
       aql.forEach((row) => {
         if (!covidRes[row.get("id")]) {
@@ -29,9 +36,9 @@
   <div class="text-end">
     <form class="flex w-full max-w-sm space-x-3">
       <div class=" relative ">
-        <sl-input placeholder="Search all patients" />
+        <input bind:value={query} placeholder="Search all patients" />
       </div>
-      <sl-button>Filter</sl-button>
+      <sl-button on:click={()=>search(query)}>Filter</sl-button>
     </form>
   </div>
   <Link to="/patient">
