@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fhir } from "../utils/fhir";
+  import { fhir } from "../services"
   import { onMount } from "svelte";
   import PatientList from "./PatientList.svelte";
   import { Link, navigate } from "svelte-routing";

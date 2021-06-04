@@ -6,7 +6,7 @@
   import { calcHeart } from "./scores";
   import "@shoelace-style/shoelace/dist/components/details/details";
   import { medications } from "./codes";
-  import { openehr } from "../utils/openehr";
+  import { openehr } from "../services";
   import { navigate } from "svelte-routing";
   import { onMount } from "svelte";
   import PatientBanner from "./PatientBanner.svelte";

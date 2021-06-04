@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { fhir } from "../utils/fhir";
   import { Link } from "svelte-routing";
   import "@shoelace-style/shoelace/dist/components/relative-time/relative-time";
   import { patientProxy } from "./patientProxy";

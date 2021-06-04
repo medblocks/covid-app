@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { openehr } from "../utils/openehr";
+  import { openehr } from "../services";
   import { onMount } from "svelte";
   import { Link } from "svelte-routing";
   export let ehrId: string;

@@ -1,4 +1,4 @@
-import { openehr } from "../utils/openehr";
+import { openehr } from "../services";
 
 export const formatAql = (aqlResultData): Map<string, any>[] => {
   const { columns, rows } = aqlResultData;

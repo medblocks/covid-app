@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fhir } from "../utils/fhir";
+  import { fhir } from "../services"
   import { onMount } from "svelte";
   import { patientProxy } from "./patientProxy";
 
