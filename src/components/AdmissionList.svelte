@@ -1,15 +1,21 @@
 <script lang="ts">
   import { fhir } from "../utils/fhir";
-
   import { onMount } from "svelte";
   import PatientList from "./PatientList.svelte";
-  import { Link } from "svelte-routing";
+  import { Link, navigate } from "svelte-routing";
+  import { SearchAllPatients } from "./searchPatient";
+
   let patients;
   onMount(async () => {
-    const r = await fhir.get(
-      "/Encounter?status=in-progress&_include=Encounter:subject"
-    );
-    const entries = r.data?.entry;
+    const r = await fhir.get("/Encounter", {
+      params: {
+        status: "in-progress",
+        _include: "Encounter:subject",
+        _sort: "-_lastUpdated",
+        _count: 50,
+      },
+    });
+    const entries = r.data?.entry || [];
     patients = entries.filter((e) => e?.search?.mode === "include");
   });
 </script>
@@ -27,9 +33,13 @@
   </h2>
 
   <div class="text-end">
-    <form class="flex w-full max-w-sm space-x-3">
-      <sl-input placeholder="Search all patients" />
-    </form>
+    <mb-search
+      on:mb-input={(e) => {
+        navigate(`/clinical/${e.target.data.code}`);
+      }}
+      axios={fhir}
+      plugin={SearchAllPatients}
+    />
   </div>
   <Link to="/patient">
     <sl-button type="primary"
@@ -37,4 +47,4 @@
     >
   </Link>
 </div>
-<PatientList {patients} label="Admissions" />
+<PatientList {patients} />

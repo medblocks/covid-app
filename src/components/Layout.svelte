@@ -8,8 +8,6 @@
     localStorage.clear();
     token.set(localStorage.getItem("token"));
   };
-
-  let isAuthenticated: boolean;
 </script>
 
 <div class="container mx-auto px-4 sm:px-8 max-w-7xl">

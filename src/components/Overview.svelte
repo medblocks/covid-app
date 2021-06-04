@@ -180,4 +180,8 @@
       Please click on the above buttons to start entering data.
     </p>
   {/if}
+{:else}
+<p class="mt-5 text-xl text-gray-700">
+  Loading...
+</p>
 {/if}
