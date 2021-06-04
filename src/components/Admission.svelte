@@ -2,10 +2,12 @@
   import { fhir } from "../utils/fhir";
 
   import { onMount } from "svelte";
+  import { navigate } from "svelte-routing";
 
   export let ehrId;
   let form;
   let encounter;
+  let loading;
   onMount(async () => {
     const r = await fhir.get(`/Encounter?subject=${ehrId}`);
     if (r?.data?.entry) {
@@ -17,6 +19,7 @@
   });
 
   async function handleSubmit(e: CustomEvent) {
+    loading = true;
     const data = e.detail;
     if (encounter) {
       await fhir.put(`/Encounter/${encounter.id}`, {
@@ -27,6 +30,8 @@
       const r = await fhir.post("Encounter", data);
       console.log(r);
     }
+    loading = false;
+    navigate("/", { replace: true });
   }
 </script>
 
@@ -48,6 +53,6 @@
   </mb-select>
 
   <mb-submit>
-    <sl-button type="info" class="w-full">Save</sl-button>
+    <sl-button {loading} type="info" class="w-full">Save</sl-button>
   </mb-submit>
 </mb-fhir-form>

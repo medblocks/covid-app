@@ -2,7 +2,7 @@
   import { Link } from "svelte-routing";
 </script>
 
-<h1>No access 🤕</h1>
+<h1>No access 🤕. Please sign in</h1>
 <h2>
-  Go back to <Link to="/signin">Sign in page</Link>
+  
 </h2>

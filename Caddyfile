@@ -1,0 +1,4 @@
+localhost {
+    reverse_proxy /fhir/* fhir:8080
+    reverse_proxy /ehrbase/* ehrbase:8080
+}

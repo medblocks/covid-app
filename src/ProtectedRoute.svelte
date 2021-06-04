@@ -1,14 +1,13 @@
 <script>
-    import { Route, Link } from 'svelte-routing';
-    import accessDenied from './components/accessDenied.svelte';
-    import { token } from './stores.js';
-    export let path;
-    export let component;
-    $: isAuthenticated = $token;
+  import { Route, Link } from "svelte-routing";
+  import accessDenied from "./components/accessDenied.svelte";
+  import { token } from "./stores";
+  export let path;
+  export let component;
 </script>
 
-{#if isAuthenticated}
-    <Route path={path} component={component} />
+{#if $token}
+  <Route {path} {component} />
 {:else}
-    <Route path={path} component={accessDenied} />
+  <Route {path} component={accessDenied} />
 {/if}

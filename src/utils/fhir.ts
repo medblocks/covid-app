@@ -1,8 +1,8 @@
-import axios from 'axios'
+import axios from "axios";
 
 export const fhir = axios.create({
-  baseURL: 'http://localhost:8090/fhir',
+  baseURL: "https://covid.medblocks.org/fhir",
   headers: {
-    'Cache-Control': 'no-cache'
-  }
+    "Cache-Control": "no-cache",
+  },
 });
