@@ -53,6 +53,7 @@
   <mb-buttons
     path="mcs.covidresult.v0/laboratory_test_result/any_event:0/laboratory_analyte_result/analyte_result"
   >
+    <mb-option label="Sample given" value="given" />
     <mb-option label="Positive" value="positive" />
     <mb-option label="Negative" value="negative" />
   </mb-buttons>

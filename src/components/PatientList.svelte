@@ -1,17 +1,32 @@
 <script lang="ts">
-  import { Link } from "svelte-routing";
+  import { Link, navigate } from "svelte-routing";
   import "@shoelace-style/shoelace/dist/components/relative-time/relative-time";
+  import "@shoelace-style/shoelace/dist/components/dialog/dialog";
   import { patientProxy } from "./patientProxy";
   import { getCovidResults } from "./aqls";
+  import PatientBanner from "./PatientBanner.svelte";
+  import { fhir } from "../services";
+  import { createEventDispatcher } from "svelte";
   export let patients: any[] = null;
   let proxyList: any[];
+  const dispatch = createEventDispatcher();
   $: if (patients) {
     proxyList = patients.map((p) => ({
       proxy: patientProxy(p.resource),
       resource: p.resource,
     }));
   }
-
+  let dialog;
+  let deletePatient: string;
+  $: if (deletePatient) {
+    dialog.show();
+  }
+  async function deletePatientAction() {
+    const r = await fhir.delete(`Patient/${deletePatient}`);
+    console.log(r.data);
+    dialog.hide();
+    dispatch("reload");
+  }
   let covidRes = {};
   $: if (patients?.length > 0) {
     getCovidResults(patients.map((p) => p.resource.id)).then((aql) => {
@@ -66,6 +81,12 @@
                         class="absolute inset-0 bg-gray-400  opacity-50 rounded-full"
                       />
                       <span class="relative text-gray-700"> covid -ve </span>
+                    {:else if covidRes[patient.resource.id] === "Sample given"}
+                      <span
+                        aria-hidden="true"
+                        class="absolute inset-0 bg-yellow-200  opacity-50 rounded-full"
+                      />
+                      <span class="relative text-gray-700">pending</span>
                     {/if}
                   </span>
                 </td>
@@ -85,9 +106,14 @@
                   >
                     Edit
                   </Link>
-                  <Link to="delete" class="text-red-600 hover:text-red-800">
+                  <a
+                    on:click={() => {
+                      deletePatient = patient.resource.id;
+                    }}
+                    class="text-red-600 hover:text-red-800 cursor-pointer"
+                  >
                     Delete
-                  </Link>
+                  </a>
                 </td>
               </tr>
             {/each}
@@ -95,6 +121,19 @@
         </table>
       </div>
     </div>
+    <sl-dialog
+      bind:this={dialog}
+      label="Confirm Delete?"
+      class="dialog-overview"
+      on:sl-hide={() => {
+        deletePatient = undefined;
+      }}
+    >
+      <p>Are you sure you want to delete this patient?</p>
+      <sl-button slot="footer" type="danger" on:click={deletePatientAction}
+        >Delete</sl-button
+      >
+    </sl-dialog>
     {#if patients.length >= 50}
       <p class="mt-5 text-gray-700">
         Showing only top 50 latest patients. Use the searchbox to get more.

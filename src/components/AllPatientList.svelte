@@ -1,16 +1,18 @@
 <script lang="ts">
-  import { fhir } from "../services"
+  import { fhir } from "../services";
   import { onMount } from "svelte";
   import PatientList from "./PatientList.svelte";
   import { Link, navigate } from "svelte-routing";
   import { SearchAllPatients } from "./searchPatient";
   let patients;
-  onMount(async () => {
+  const load = async () => {
     const r = await fhir.get("/Patient", {
       params: { _count: 50, _sort: "-_lastUpdated" },
     });
     patients = r.data?.entry || [];
-  });
+  };
+
+  onMount(load);
 </script>
 
 <div class="flex flex-row mb-1 sm:mb-0 justify-between w-full">
@@ -40,4 +42,4 @@
     >
   </Link>
 </div>
-<PatientList {patients} />
+<PatientList {patients} on:reload={load} />

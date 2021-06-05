@@ -1,6 +1,6 @@
 <script lang="ts">
   import "medblocks-ui/dist/medblocks";
-  import "@shoelace-style/shoelace/dist/themes/base.css";
+  
   import { onMount } from "svelte";
   import { fhir } from "../services";
   import { Link, navigate } from "svelte-routing";

@@ -6,7 +6,7 @@
   import { SearchAllPatients } from "./searchPatient";
 
   let patients;
-  onMount(async () => {
+  const load = async () => {
     const r = await fhir.get("/Encounter", {
       params: {
         status: "in-progress",
@@ -17,7 +17,8 @@
     });
     const entries = r.data?.entry || [];
     patients = entries.filter((e) => e?.search?.mode === "include");
-  });
+  };
+  onMount(load);
 </script>
 
 <div class="flex flex-row mb-1 sm:mb-0 justify-between w-full">
@@ -47,4 +48,4 @@
     >
   </Link>
 </div>
-<PatientList {patients} />
+<PatientList {patients} on:reload={load} />

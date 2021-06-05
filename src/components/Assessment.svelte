@@ -23,7 +23,7 @@
 
   let scores = {};
   let total;
-
+  let composer_name: string;
   onMount(async () => {
     if (compositionId) {
       const r = await openehr.get(`/ecis/v1/composition/${compositionId}`, {
@@ -31,6 +31,7 @@
       });
       const data = r.data?.composition;
       if (data) {
+        composer_name = data["covid_care_daily_sheet/composer|name"] || "";
         form.import(data);
       }
     }
@@ -92,7 +93,15 @@
   class="flex flex-col gap-3"
   {ctx}
 >
-  <p class="mt-5 text-2xl font-bold text-gray-700">Vitals</p>
+  <sl-input
+    class="mt-5"
+    label="Volunteer"
+    value={composer_name}
+    on:sl-input={(e) => {
+      composer_name = e.target.value;
+    }}
+  />
+  <p class=" text-2xl font-bold text-gray-700">Vitals</p>
   <mb-buttons
     on:mb-input={(e) => {
       console.log("changing alert");
@@ -152,6 +161,7 @@
     <mb-unit unit="/min" label="/min" />
   </mb-quantity>
   <mb-percent
+    required
     path="covid_care_daily_sheet/vitals/pulse_oximetry/any_event:0/spo"
     label="SpO₂ (%)"
     on:mb-input={(e) => {
@@ -176,6 +186,8 @@
         path="covid_care_daily_sheet/vitals/pulse_oximetry/any_event:0/inspired_oxygen/flow_rate"
         label="Flow rate"
         default="l/min"
+        max="50"
+        min="0"
       >
         <mb-unit unit="ml/min" label="ml/min" />
         <mb-unit unit="l/min" label="l/min" />
@@ -346,6 +358,7 @@
       bind={med.code}
     />
   {/each}
+
   <!-- Contexts -->
   <div class="hidden">
     <mb-context
@@ -599,7 +612,7 @@
     <mb-context
       path="covid_care_daily_sheet/management/other_regular_medication/encoding"
     />
-    <mb-context path="covid_care_daily_sheet/composer" />
+
     <mb-context path="covid_care_daily_sheet/language" />
     <mb-context path="covid_care_daily_sheet/territory" />
   </div>
