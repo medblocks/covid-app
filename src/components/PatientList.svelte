@@ -91,7 +91,7 @@
                   </span>
                 </td>
                 <td
-                  class=" py-5 border-b border-gray-200 bg-white text-sm hidden md:inline"
+                  class=" py-5 border-b border-gray-200 bg-white text-sm hidden md:table-cell"
                 >
                   <p class="text-gray-900 whitespace-no-wrap">
                     Updated <sl-relative-time
@@ -100,14 +100,17 @@
                   </p>
                 </td>
                 <td
-                  class="px-5 py-5 space-x-5 border-b border-gray-200 bg-white text-sm"
+                  class="py-5 border-b border-gray-200 bg-white text-sm"
                 >
+                <sl-button type="text">
                   <Link
                     to={`patient/${patient.resource.id}`}
                     class="text-blue-600 hover:text-blue-900"
                   >
                     Edit
                   </Link>
+                </sl-button>
+                <sl-button type="text">
                   <a
                     on:click={() => {
                       deletePatient = patient.resource.id;
@@ -116,6 +119,7 @@
                   >
                     Delete
                   </a>
+                </sl-button>
                 </td>
               </tr>
             {/each}
