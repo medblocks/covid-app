@@ -11,7 +11,7 @@
     login(username, password);
   }}
 >
-  <div class="flex flex-col gap-4 max-w-lg">
+  <div class="flex flex-col gap-4 max-w-lg m-auto">
     <h1 class="text-lg font-bold">Sign in</h1>
     <sl-input
       value={username}
