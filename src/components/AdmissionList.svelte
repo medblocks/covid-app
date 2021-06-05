@@ -33,7 +33,7 @@
     </div>
   </h2>
 </div>
-<div class="flex justify-between gap-3">
+<div class="flex justify-between gap-3 flex-wrap">
   <div class="text-end">
     <mb-search
       on:mb-input={(e) => {
