@@ -96,7 +96,7 @@
   <sl-input
     class="mt-5"
     label="Volunteer"
-    value={composer_name}
+    value={composer_name || ""}
     on:sl-input={(e) => {
       composer_name = e.target.value;
     }}

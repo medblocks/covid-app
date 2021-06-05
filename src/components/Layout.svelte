@@ -15,7 +15,7 @@
     <nav class="flex mb-5 justify-between">
       <div>
         <Link to="/">
-          <sl-button type="info">Home</sl-button>
+          <sl-button type="text"><sl-icon name="house-door" slot="prefix"></sl-icon>Home</sl-button>
         </Link>
       </div>
       <div>

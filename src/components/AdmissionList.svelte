@@ -23,16 +23,17 @@
 
 <div class="flex flex-row mb-1 sm:mb-0 justify-between w-full flex-wrap">
   <h2 class="text-2xl leading-tight">
-    <div>
+    <div class="my-3">
       <Link to="/">
-        <sl-tab>All Patients</sl-tab>
+        <sl-button type="text">All Patients</sl-button>
       </Link>
       <Link to="admissions">
-        <sl-tab active>Admissions</sl-tab>
+        <sl-button type="info">Admissions</sl-button>
       </Link>
     </div>
   </h2>
-
+</div>
+<div class="flex justify-between gap-3">
   <div class="text-end">
     <mb-search
       on:mb-input={(e) => {

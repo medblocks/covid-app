@@ -17,12 +17,12 @@
 
 <div class="flex flex-row mb-1 sm:mb-0 justify-between w-full flex-wrap">
   <h2 class="text-2xl leading-tight">
-    <div>
+    <div class="my-3">
       <Link to="/">
-        <sl-tab active>All Patients</sl-tab>
+        <sl-button type="info">All Patients</sl-button>
       </Link>
       <Link to="admissions">
-        <sl-tab>Admissions</sl-tab>
+        <sl-button type="text">Admissions</sl-button>
       </Link>
     </div>
   </h2>
