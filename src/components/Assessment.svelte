@@ -177,7 +177,7 @@
     }}
   />
   {#if !onAir}
-    <div class="flex gap-3">
+    <div class="flex flex-col gap-3">
       <mb-percent
         path="covid_care_daily_sheet/vitals/pulse_oximetry/any_event:0/inspired_oxygen/percent_o"
         label="Percent O₂"

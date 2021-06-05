@@ -15,7 +15,7 @@
   onMount(load);
 </script>
 
-<div class="flex flex-row mb-1 sm:mb-0 justify-between w-full">
+<div class="flex flex-row mb-1 sm:mb-0 justify-between w-full flex-wrap">
   <h2 class="text-2xl leading-tight">
     <div>
       <Link to="/">
@@ -26,7 +26,8 @@
       </Link>
     </div>
   </h2>
-
+</div>
+<div class="flex justify-between gap-3">
   <div class="text-end">
     <mb-search
       on:mb-input={(e) => {

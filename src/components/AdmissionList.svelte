@@ -21,7 +21,7 @@
   onMount(load);
 </script>
 
-<div class="flex flex-row mb-1 sm:mb-0 justify-between w-full">
+<div class="flex flex-row mb-1 sm:mb-0 justify-between w-full flex-wrap">
   <h2 class="text-2xl leading-tight">
     <div>
       <Link to="/">

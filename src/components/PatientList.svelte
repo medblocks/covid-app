@@ -90,7 +90,9 @@
                     {/if}
                   </span>
                 </td>
-                <td class=" py-5 border-b border-gray-200 bg-white text-sm">
+                <td
+                  class=" py-5 border-b border-gray-200 bg-white text-sm hidden md:inline"
+                >
                   <p class="text-gray-900 whitespace-no-wrap">
                     Updated <sl-relative-time
                       date={patient.resource.meta.lastUpdated}
