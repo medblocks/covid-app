@@ -21,7 +21,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "chart.js": "^3.3.2",
-    "medblocks-ui": "0.0.43",
+    "medblocks-ui": "0.0.44",
     "svelte-routing": "^1.6.0"
   }
 }

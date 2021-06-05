@@ -247,9 +247,7 @@
     >
     <mb-select
       on:mb-input={(e) => {
-        console.log("Changed on oxxygen");
         scores = { ...scores, "On Oxygen": e.target.data };
-        console.log(scores);
       }}
       path="covid_care_daily_sheet/vitals/news_uk_rcp/supplemental_oxygen"
       label="On Oxygen"
@@ -351,13 +349,24 @@
   </mb-quantity>
   <!-- Management -->
   <p class="mt-5 text-2xl font-bold text-gray-700">Management</p>
-  {#each medications as med, i}
+  {#each medications as med}
     <mb-checkbox-any
       path={med.path}
       label={med.code?.value || med.code}
       bind={med.code}
     />
   {/each}
+  <mb-checkbox-any
+    disabled
+    data={!onAir}
+    path="covid_care_daily_sheet/management/oxygen_therapy/procedure_name"
+    label="On Oxygen"
+    bind={{
+      code: "8",
+      value: "Oxygen Therapy",
+      terminology: "SNOMED-CT",
+    }}
+  />
 
   <!-- Contexts -->
   <div class="hidden">
