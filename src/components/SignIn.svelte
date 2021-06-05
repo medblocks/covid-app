@@ -1,29 +1,35 @@
 <script>
-  import { Link, navigate } from "svelte-routing";
-  import { token } from "../stores";
+  import { login } from "../auth";
+  import "@shoelace-style/shoelace/dist/components/form/form";
   let username = "";
   let password = "";
-  const login = (username, password) => {
-    console.log(username, password);
-    localStorage.setItem("token", "1");
-    token.set(localStorage.getItem("token"));
-    navigate("/", { replace: true });
-  };
+  export let state;
 </script>
 
-<div class="flex flex-col justify-center items-center gap-2">
-  <h1 class="text-lg font-bold">Sign in</h1>
-  <sl-input
-    value={username}
-    placeholder="Username"
-    on:sl-input={(e) => (username = e.target.value)}
-  />
-  <sl-input
-    type="password"
-    value={password}
-    placeholder="Password"
-    on:sl-input={(e) => (password = e.target.value)}
-  /><sl-button on:click={() => login(username, password)} type="default"
-    >Sign in</sl-button
-  >
-</div>
+<sl-form
+  on:sl-submit={() => {
+    login(username, password);
+  }}
+>
+  <div class="flex flex-col gap-4 max-w-lg">
+    <h1 class="text-lg font-bold">Sign in</h1>
+    <sl-input
+      value={username}
+      placeholder="Username"
+      on:sl-input={(e) => (username = e.target.value)}
+    />
+    <sl-input
+      type="password"
+      value={password}
+      toggle-password
+      placeholder="Password"
+      on:sl-input={(e) => (password = e.target.value)}
+    /><sl-button submit type="info">Sign in</sl-button>
+
+    {#if state}
+      <p class="capitalize mt-5 text-red-600 font-semibold">
+        {state} login
+      </p>
+    {/if}
+  </div>
+</sl-form>

@@ -4,6 +4,7 @@
   import { Link } from "svelte-routing";
   export let ehrId: string;
   import "@shoelace-style/shoelace/dist/components/format-date/format-date";
+  import "@shoelace-style/shoelace/dist/components/skeleton/skeleton";
   import LineChart from "./LineChart.svelte";
 
   import { allCompositions } from "./aqls";
@@ -184,5 +185,9 @@
     </p>
   {/if}
 {:else}
-  <p class="mt-5 text-xl text-gray-700">Loading...</p>
+  <div class="mt-5 flex flex-col gap-6">
+    {#each [...Array(20)] as i}
+      <sl-skeleton />
+    {/each}
+  </div>
 {/if}

@@ -104,7 +104,6 @@
   <p class=" text-2xl font-bold text-gray-700">Vitals</p>
   <mb-buttons
     on:mb-input={(e) => {
-      console.log("changing alert");
       scores = { ...scores, Consciousness: e.target.data };
     }}
     path="covid_care_daily_sheet/vitals/news_uk_rcp/level_of_consciousness"

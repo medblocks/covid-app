@@ -1,8 +1,7 @@
 <script>
-  import { Link } from "svelte-routing";
+  import { navigate } from "svelte-routing";
+  import { onMount } from "svelte";
+  onMount(() => {
+    navigate("/signin", { replace: true });
+  });
 </script>
-
-<h1>No access 🤕. Please sign in</h1>
-<h2>
-  
-</h2>

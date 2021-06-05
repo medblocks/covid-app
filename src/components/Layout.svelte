@@ -4,10 +4,7 @@
   import { Link } from "svelte-routing";
   import { token } from "../stores";
 
-  const logout = () => {
-    localStorage.clear();
-    token.set(localStorage.getItem("token"));
-  };
+  import {logout} from "../auth"
 </script>
 
 <div class="container mx-auto px-4 sm:px-8 max-w-7xl">

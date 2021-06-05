@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { Link, navigate } from "svelte-routing";
+  import { Link } from "svelte-routing";
   import "@shoelace-style/shoelace/dist/components/relative-time/relative-time";
   import "@shoelace-style/shoelace/dist/components/dialog/dialog";
   import { patientProxy } from "./patientProxy";
   import { getCovidResults } from "./aqls";
-  import PatientBanner from "./PatientBanner.svelte";
   import { fhir } from "../services";
   import { createEventDispatcher } from "svelte";
   export let patients: any[] = null;
@@ -99,27 +98,25 @@
                     />
                   </p>
                 </td>
-                <td
-                  class="py-5 border-b border-gray-200 bg-white text-sm"
-                >
-                <sl-button type="text">
-                  <Link
-                    to={`patient/${patient.resource.id}`}
-                    class="text-blue-600 hover:text-blue-900"
-                  >
-                    Edit
-                  </Link>
-                </sl-button>
-                <sl-button type="text">
-                  <a
-                    on:click={() => {
-                      deletePatient = patient.resource.id;
-                    }}
-                    class="text-red-600 hover:text-red-800 cursor-pointer"
-                  >
-                    Delete
-                  </a>
-                </sl-button>
+                <td class="py-5 border-b border-gray-200 bg-white text-sm">
+                  <sl-button type="text">
+                    <Link
+                      to={`patient/${patient.resource.id}`}
+                      class="text-blue-600 hover:text-blue-900"
+                    >
+                      Edit
+                    </Link>
+                  </sl-button>
+                  <sl-button type="text">
+                    <a
+                      on:click={() => {
+                        deletePatient = patient.resource.id;
+                      }}
+                      class="text-red-600 hover:text-red-800 cursor-pointer"
+                    >
+                      Delete
+                    </a>
+                  </sl-button>
                 </td>
               </tr>
             {/each}
@@ -149,5 +146,9 @@
     <p class="mt-5 text-xl text-gray-700">No patients</p>
   {/if}
 {:else}
-  <p class="mt-5 text-xl text-gray-700">Loading...</p>
+  <div class="mt-5 flex flex-col gap-3">
+    {#each [...Array(3)] as i}
+      <sl-skeleton />
+    {/each}
+  </div>
 {/if}

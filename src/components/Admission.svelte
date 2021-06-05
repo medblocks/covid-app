@@ -28,7 +28,6 @@
       });
     } else {
       const r = await fhir.post("Encounter", data);
-      console.log(r);
     }
     loading = false;
     navigate("/", { replace: true });

@@ -1,17 +1,16 @@
 import axios from "axios";
-import { token } from "./stores";
-import { get } from "svelte/store";
-console.log(get(token));
+const BASE_URL = "https://covid.medblocks.org";
+// const BASE_URL = "http://localhost:8080";
 
 export const fhir = axios.create({
-  baseURL: "https://covid.medblocks.org/fhir",
+  baseURL: `${BASE_URL}/fhir`,
   headers: {
     "Cache-Control": "no-cache",
   },
 });
 
 export const openehr = axios.create({
-  baseURL: "https://covid.medblocks.org/ehrbase/rest",
+  baseURL: `${BASE_URL}/ehrbase/rest`,
   headers: {
     Accept: "application/json",
   },

@@ -15,6 +15,7 @@
 <Router>
   <Layout>
     <Route path="/signin" component={SignIn} />
+    <Route path="/signin/:state" component={SignIn} />
     <ProtectedRoute path="/" component={AllPatientList} />
     <ProtectedRoute path="admissions" component={AdmissionList} />
     <ProtectedRoute path="patient/" component={PatientRegistration} />
