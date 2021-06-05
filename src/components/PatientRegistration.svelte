@@ -1,6 +1,5 @@
 <script lang="ts">
   import "medblocks-ui/dist/medblocks";
-  
   import { onMount } from "svelte";
   import { fhir } from "../services";
   import { Link, navigate } from "svelte-routing";
@@ -33,12 +32,11 @@
   };
 </script>
 
-<div class="flex justify-between mb-10">
-  <h1 class="text-2xl leading-tight">Patient registration</h1>
-  <Link to="/" class="text-blue-500">Go back</Link>
-</div>
+
+<h1 class="text-2xl mb-5 font-bold text-gray-700">Patient registration</h1>
+
 <mb-fhir-form
-  class="flex flex-col gap-4 p-10"
+  class="flex flex-col gap-3"
   {data}
   bind:this={form}
   on:mb-input={(e) => {
