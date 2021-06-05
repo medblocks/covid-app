@@ -615,6 +615,10 @@
 
     <mb-context path="covid_care_daily_sheet/language" />
     <mb-context path="covid_care_daily_sheet/territory" />
+    <mb-context
+      path="covid_care_daily_sheet/composer"
+      data={composer_name ? { name: composer_name } : undefined}
+    />
   </div>
 
   <mb-submit>

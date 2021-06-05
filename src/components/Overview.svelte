@@ -79,12 +79,14 @@
                 <sl-format-date
                   month="long"
                   day="numeric"
+                  hour-format="12"
                   date={data.get("time")}
                 />
                 <br />
                 <sl-format-date
                   hour="numeric"
                   minute="numeric"
+                  hour-format="12"
                   date={data.get("time")}
                 />
               </td>
@@ -156,6 +158,7 @@
                     day="numeric"
                     hour="numeric"
                     minute="numeric"
+                    hour-format="12"
                     date={sheet.get("time")}
                   />
                 </td>
@@ -181,7 +184,5 @@
     </p>
   {/if}
 {:else}
-<p class="mt-5 text-xl text-gray-700">
-  Loading...
-</p>
+  <p class="mt-5 text-xl text-gray-700">Loading...</p>
 {/if}
