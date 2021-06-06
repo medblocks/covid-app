@@ -19,6 +19,7 @@
   });
   const handleSubmit = async (e: any) => {
     const data = e.detail;
+    console.log(data);
     if (id) {
       loading = true;
       await fhir.put(`/Patient/${id}`, { ...data, id });
@@ -31,7 +32,6 @@
     navigate("/", { replace: true });
   };
 </script>
-
 
 <h1 class="text-2xl mb-5 font-bold text-gray-700">Patient registration</h1>
 
@@ -49,13 +49,25 @@
   <mb-input label="Name" path="name[0].given[0]" />
 
   <mb-date label="Date of birth" path="birthDate" />
-  <mb-buttons type="code" label="Gender" path="gender">
+  <mb-buttons datatype="code" label="Gender" path="gender">
     <mb-option value="male" label="Male" />
     <mb-option value="female" label="Female" />
     <mb-option value="other" label="Other" />
   </mb-buttons>
-  <mb-input label="Phone number" path="telecom[0].value" />
-  <mb-input path="identifier[0].value" label="Aadhar card number" />
+  <mb-input
+    type="number"
+    min="1000000000"
+    max="9999999999"
+    label="Phone number"
+    path="telecom[0].value"
+  />
+  <mb-input
+    path="identifier[0].value"
+    type="number"
+    min="100000000000"
+    max="999999999999"
+    label="Aadhar card number"
+  />
   <mb-input path="identifier[0].system" class="hidden" data="aadhar" />
   <mb-input label="Address" textarea path="address[0].text" />
   <label for="" class="font-bold">Attendant information</label>
@@ -64,12 +76,21 @@
     <mb-select
       label="Attendant relationship"
       path="contact[0].relationship[0]"
-      type="CodableConcept"
+      datatype="CodableConcept"
     >
       <mb-option value="mother" label="Mother" />
       <mb-option value="father" label="Father" />
+      <mb-option value="brother" label="Brother" />
+      <mb-option value="sister" label="Sister" />
+      <mb-option value="husband" label="Husband" />
+      <mb-option value="wife" label="Wife" />
+      <mb-option value="neighbor" label="Neighbor" />
+      <mb-option value="other" label="Other" />
     </mb-select>
     <mb-input
+      type="number"
+      min="1000000000"
+      max="9999999999"
       label="Attendant contact number"
       path="contact[0].telecom[0].value"
     />

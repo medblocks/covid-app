@@ -4,7 +4,7 @@
   import { Link } from "svelte-routing";
   import { token } from "../stores";
 
-  import {logout} from "../auth"
+  import { logout } from "../auth";
 </script>
 
 <div class="container mx-auto px-4 sm:px-8 max-w-7xl">
@@ -12,8 +12,16 @@
     <nav class="flex mb-5 justify-between">
       <div>
         <Link to="/">
-          <sl-button type="text"><sl-icon name="house-door" slot="prefix"></sl-icon>Home</sl-button>
+          <sl-button type="text"
+            ><sl-icon name="house-door" slot="prefix" />Home</sl-button
+          >
         </Link>
+        <sl-button
+          type="text"
+          on:click={() => {
+            history.back();
+          }}><sl-icon name="arrow-left" slot="prefix" />Go back</sl-button
+        >
       </div>
       <div>
         {#if $token}
