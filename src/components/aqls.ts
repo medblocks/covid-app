@@ -53,8 +53,11 @@ export const allCompositions = async (ehrId) => {
     from EHR e CONTAINS COMPOSITION c [openEHR-EHR-COMPOSITION.encounter.v1]  
     where c/archetype_details/template_id/value MATCHES {'MCS.CovidCare.DailySheet.v0.1', 'MCS.CovidCare.DailySheet.v0.2'} 
     AND e/ehr_id/value='${ehrId}'
+    LIMIT 15
     ORDER BY time DESC
     `;
-  const r = await openehr.post(`/openehr/v1/query/aql`, { q: query });
+  const r = await openehr.post(`/openehr/v1/query/aql`, {
+    q: query,
+  });
   return formatAql(r.data);
 };

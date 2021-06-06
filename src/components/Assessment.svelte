@@ -363,7 +363,7 @@
     disabled
     data={!onAir}
     path="covid_care_daily_sheet/management/oxygen_therapy/procedure_name"
-    label="On Oxygen"
+    label={`On Oxygen ('On Air' ${!onAir ? "uncheck" : "checked"})`}
     bind={{
       code: "8",
       value: "Oxygen Therapy",
