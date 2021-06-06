@@ -44,7 +44,7 @@
     <mb-context path="resourceType" data="Encounter" />
     <mb-context path="subject" data={{ reference: `Patient/${ehrId}` }} />
   </div>
-  <mb-select path="status" type="code" label="Status">
+  <mb-select path="status" datatype="code" label="Status">
     <mb-option value="in-progress" label="Started" />
     <mb-option value="finished" label="Completed" />
     <mb-option value="cancelled" label="Cancelled" />
