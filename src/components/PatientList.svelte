@@ -107,15 +107,12 @@
                       Edit
                     </Link>
                   </sl-button>
-                  <sl-button type="text">
-                    <a
-                      on:click={() => {
-                        deletePatient = patient.resource.id;
-                      }}
-                      class="text-red-600 hover:text-red-800 cursor-pointer"
-                    >
-                      Delete
-                    </a>
+                  <sl-button type="text"  on:click={() => {
+                    deletePatient = patient.resource.id;
+                  }}>
+                  <span class="text-red-600 hover:text-red-800">
+                    Delete
+                  </span>
                   </sl-button>
                 </td>
               </tr>
