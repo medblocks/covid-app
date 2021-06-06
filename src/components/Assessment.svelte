@@ -24,6 +24,7 @@
   let scores = {};
   let total;
   let composer_name: string;
+  let error = false;
   onMount(async () => {
     if (compositionId) {
       const r = await openehr.get(`/ecis/v1/composition/${compositionId}`, {
@@ -40,22 +41,25 @@
   async function handleSubmit(e: CustomEvent) {
     const data = e.detail;
     loading = true;
-    if (compositionId) {
-      const r = await openehr.put(
-        `/ecis/v1/composition/${compositionId.split(":")[0]}`,
-        data,
-        {
+    try {
+      if (compositionId) {
+        const r = await openehr.put(
+          `/ecis/v1/composition/${compositionId.split(":")[0]}`,
+          data,
+          {
+            params: { format: "FLAT", templateId, ehrId },
+          }
+        );
+      } else {
+        const r = await openehr.post("/ecis/v1/composition/", data, {
           params: { format: "FLAT", templateId, ehrId },
-        }
-      );
-      loading = false;
-    } else {
-      const r = await openehr.post("/ecis/v1/composition/", data, {
-        params: { format: "FLAT", templateId, ehrId },
-      });
-      console.log(r);
-      loading = false;
+        });
+        console.log(r);
+      }
+    } catch (e) {
+      error = true;
     }
+    loading = false;
     navigate(`/clinical/${ehrId}`, { replace: true });
   }
 
@@ -628,7 +632,12 @@
       data={composer_name ? { name: composer_name } : undefined}
     />
   </div>
-
+  {#if error}
+    <p class="text-red-600 font-semibold">
+      Something went wrong. Please make sure all the fields are correctly filled
+      up.
+    </p>
+  {/if}
   <mb-submit>
     <sl-button size="large" class="mt-4 w-full" {loading} type="info">
       Save
