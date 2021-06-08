@@ -5,7 +5,7 @@
   import { navigate } from "svelte-routing";
 
   export let ehrId;
-  export let redirectUrl = "/";
+  export let redirectUrl;
   let form;
   let invoice;
   let loading;
@@ -31,7 +31,7 @@
       const r = await fhir.post("Invoice", data);
     }
     loading = false;
-    navigate(redirectUrl, { replace: true });
+    navigate(redirectUrl || `/clinical/${ehrId}`, { replace: true });
   }
 </script>
 
@@ -52,7 +52,7 @@
     />
   </div>
   <mb-input type="number" label="Total Donations" path="totalNet.value" />
-  <mb-input textarea path="note[0].text" label="Notes"/>
+  <mb-input textarea path="note[0].text" label="Notes" />
   <mb-submit>
     <sl-button {loading} type="info" class="w-full">Save</sl-button>
   </mb-submit>
