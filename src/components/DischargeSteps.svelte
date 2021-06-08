@@ -36,7 +36,7 @@
                 class="w-full bg-gray-200 rounded items-center align-middle align-center flex-1 "
               >
                 <div
-                  class="bg-green-200 py-1 rounded"
+                  class="bg-green-200 py-1 rounded w-0 w-full"
                   class:w-full={stepInt > i}
                   class:w-0={stepInt <= i}
                 />
@@ -44,7 +44,7 @@
             </div>
           {/if}
           <div
-            class="w-10 h-10 mx-auto rounded-full text-lg text-white flex items-center"
+            class="w-10 h-10 mx-auto rounded-full text-lg text-white flex items-center bg-green-500"
             class:bg-green-500={stepInt > i}
           >
             <span class="text-center w-full" class:text-gray-600={stepInt <= i}>

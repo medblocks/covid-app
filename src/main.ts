@@ -1,4 +1,4 @@
-import "virtual:windi.css";
+import "./tailwind.css";
 import App from "./App.svelte";
 import "@shoelace-style/shoelace/dist/components/tab/tab";
 
