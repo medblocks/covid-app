@@ -7,6 +7,10 @@
   import { fhir } from "../services";
   import { createEventDispatcher } from "svelte";
   export let patients: any[] = null;
+  export let action: { name: string; segment: string } = {
+    name: "Admit",
+    segment: "admission",
+  };
   let proxyList: any[];
   const dispatch = createEventDispatcher();
   $: if (patients) {
@@ -99,21 +103,27 @@
                   </p>
                 </td>
                 <td class="py-5 border-b border-gray-200 bg-white text-sm">
-                  <sl-button type="text">
-                    <Link
-                      to={`patient/${patient.resource.id}`}
-                      class="text-blue-600 hover:text-blue-900"
-                    >
-                      Edit
+                  <div class="flex flex-wrap gap-3 justify-center">
+                    <Link to={`patient/${patient.resource.id}`}>
+                      <sl-button>
+                        <sl-icon name="pencil" slot="prefix" />
+                        Edit
+                      </sl-button>
                     </Link>
-                  </sl-button>
-                  <sl-button type="text"  on:click={() => {
-                    deletePatient = patient.resource.id;
-                  }}>
-                  <span class="text-red-600 hover:text-red-800">
-                    Delete
-                  </span>
-                  </sl-button>
+                    <Link
+                      to={`clinical/${patient.resource.id}/${action.segment}`}
+                    >
+                      <sl-button> {action.name} </sl-button>
+                    </Link>
+                    <sl-button
+                      type="danger"
+                      on:click={() => {
+                        deletePatient = patient.resource.id;
+                      }}
+                    >
+                      Delete
+                    </sl-button>
+                  </div>
                 </td>
               </tr>
             {/each}

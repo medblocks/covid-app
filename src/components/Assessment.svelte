@@ -9,10 +9,10 @@
   import { openehr } from "../services";
   import { navigate } from "svelte-routing";
   import { onMount } from "svelte";
-  import PatientBanner from "./PatientBanner.svelte";
   export let compositionId: string | undefined = undefined;
   export let ehrId: string;
   export let templateId: string = "MCS.CovidCare.DailySheet.v0.2";
+  export let redirectUrl: string | undefined;
 
   let form;
   let loading = false;
@@ -60,7 +60,7 @@
       error = true;
     }
     loading = false;
-    navigate(`/clinical/${ehrId}`, { replace: true });
+    navigate(redirectUrl ?? `/clinical/${ehrId}`, { replace: true });
   }
 
   $: {
@@ -91,6 +91,7 @@
   };
 </script>
 
+<p class="my-5 text-xl font-semibold text-gray-700">Daily Monitoring</p>
 <mb-form
   bind:this={form}
   on:mb-submit={handleSubmit}
@@ -98,7 +99,6 @@
   {ctx}
 >
   <sl-input
-    class="mt-5"
     label="Volunteer"
     value={composer_name || ""}
     on:sl-input={(e) => {

@@ -5,6 +5,7 @@
   import Layout from "./components/Layout.svelte";
   import AllPatientList from "./components/AllPatientList.svelte";
   import AdmissionList from "./components/AdmissionList.svelte";
+  
   import { setBasePath } from "@shoelace-style/shoelace/dist/utilities/base-path.js";
   import "@shoelace-style/shoelace/dist/themes/base.css";
   import Clinical from "./components/Clinical.svelte";

@@ -5,6 +5,7 @@
   import { navigate } from "svelte-routing";
 
   export let ehrId;
+  export let redirectUrl;
   let form;
   let encounter;
   let loading;
@@ -30,11 +31,11 @@
       const r = await fhir.post("Encounter", data);
     }
     loading = false;
-    navigate("/", { replace: true });
+    navigate(redirectUrl || `/clinical/${ehrId}`, { replace: true });
   }
 </script>
 
-<h1 class="text-xl my-5">Admission Details</h1>
+<p class="my-5 text-xl font-semibold text-gray-700">Admission Details</p>
 <mb-fhir-form
   bind:this={form}
   class="flex flex-col gap-3"
@@ -46,9 +47,11 @@
   </div>
   <mb-select path="status" datatype="code" label="Status">
     <mb-option value="in-progress" label="Started" />
-    <mb-option value="finished" label="Completed" />
+    <mb-option value="finished" label="Discharged" />
+    <mb-option value="onleave" label="Discharged at Request" />
+    <mb-option value="triaged" label="Referred" />
+    <mb-option value="unknown" label="Expired" />
     <mb-option value="cancelled" label="Cancelled" />
-    <mb-option value="death" label="Patient expired" />
   </mb-select>
 
   <mb-submit>

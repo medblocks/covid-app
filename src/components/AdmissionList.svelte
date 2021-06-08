@@ -49,4 +49,8 @@
     >
   </Link>
 </div>
-<PatientList {patients} on:reload={load} />
+<PatientList
+  action={{ name: "Discharge", segment: "discharge/1" }}
+  {patients}
+  on:reload={load}
+/>

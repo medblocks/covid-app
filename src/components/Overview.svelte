@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { openehr } from "../services";
+  import { fhir, openehr } from "../services";
   import { onMount } from "svelte";
   import { Link } from "svelte-routing";
   export let ehrId: string;
@@ -11,11 +11,34 @@
   import { formatValue } from "./utils";
 
   let dailyData: Map<string, any>[] = [];
+  let encounter;
+  let invoice;
   let loaded = false;
   let scores: any = [];
   let o2scores: any = [];
-
+  const encounterStatusMap = {
+    cancelled: "Admission cancelled",
+    unknown: "Patient expired",
+    finished: "Discharged",
+    "onleave": "Discharged at Request",
+    "in-progress": "On-going Admission",
+    triaged: "Referred",
+  };
   onMount(async () => {
+    try {
+      const r = await fhir.post(`/`, {
+        resourceType: "Bundle",
+        entry: [
+          { request: { method: "GET", url: `/Encounter?subject=${ehrId}` } },
+          { request: { method: "GET", url: `/Invoice?subject=${ehrId}` } },
+        ],
+      });
+      console.log(r.data);
+      const data = r.data;
+      encounter = data?.entry?.[0]?.resource?.entry?.[0]?.resource;
+      invoice = data?.entry?.[1]?.resource?.entry?.[0]?.resource;
+      console.log({ encounter, invoice });
+    } catch (e) {}
     try {
       await openehr.get(`/openehr/v1/ehr/${ehrId}`);
     } catch (e) {
@@ -25,7 +48,6 @@
         console.log("Created EHR", r.data);
       }
     }
-
     dailyData = await allCompositions(ehrId);
     scores = dailyData
       .map((row) => ({
@@ -55,11 +77,26 @@
     </sl-button>
   </Link>
   <Link to={`admission`}>
-    <sl-button type="info"> Admission </sl-button>
+    <sl-button>Admission </sl-button>
+  </Link>
+  <Link to={`donation`}>
+    <sl-button> Donation </sl-button>
+  </Link>
+  <Link to={`discharge/1`}>
+    <sl-button> Discharge </sl-button>
   </Link>
 </div>
 
 {#if loaded}
+  <p class="my-5 text-xl font-semibold text-gray-700">Patient Status</p>
+  <p class="my-2 font-semibold text-gray-500">
+    {invoice?.totalNet?.value
+      ? `₹ ${invoice?.totalNet?.value} in donations`
+      : "No donations"}
+  </p>
+  <p class="my-2 font-semibold text-gray-500">
+    {encounterStatusMap[encounter?.status] || "No admission record"}
+  </p>
   {#if dailyData?.length > 0}
     <p class="my-5 text-xl font-semibold text-gray-700">
       Daily Monitoring Table
