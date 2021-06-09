@@ -21,9 +21,9 @@
 
     respond @options ""
     
-    basicauth @secured {
-	    admin JDJhJDE0JFZyazhvT1d6a2VESUlyaG1keTk0VWVEQ1psQVBxc2pVbDZqd0lFQy5GUzZUWENZbVNRLkxL
-    }
+    #basicauth @secured {
+	#   admin JDJhJDE0JFZyazhvT1d6a2VESUlyaG1keTk0VWVEQ1psQVBxc2pVbDZqd0lFQy5GUzZUWENZbVNRLkxL
+    #}
     
     reverse_proxy @fhir fhir:8080
     

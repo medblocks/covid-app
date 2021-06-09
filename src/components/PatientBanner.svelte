@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fhir } from "../services"
+  import { fhir } from "../services";
   import { onMount } from "svelte";
   import { patientProxy } from "./patientProxy";
 
@@ -15,6 +15,7 @@
 
 {#if patient}
   <div class="py-8 px-5 rounded-md bg-gray-900 bg-opacity-80">
+    <p class="text-white uppercase">{patient.shortUid}</p>
     <h1 class="text-2xl text-white font-semibold">{patient.name}</h1>
     <p class="text-white font-semibold">{patient.age} {patient.genderShort}</p>
   </div>

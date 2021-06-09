@@ -18,6 +18,7 @@
       proxy: patientProxy(p.resource),
       resource: p.resource,
     }));
+    console.log(proxyList);
   }
   let dialog;
   let deletePatient: string;
@@ -52,6 +53,9 @@
               <tr>
                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                   <div>
+                    <p class="text-gray-500 uppercase">
+                      {patient.proxy.shortUid}
+                    </p>
                     <p
                       class="whitespace-no-wrap font-bold text-blue-500 hover:text-blue-800"
                     >
