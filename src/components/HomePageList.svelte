@@ -11,7 +11,6 @@
   const actions = {
     admitted: { name: "Discharge", segment: "discharge/1" },
     all: { name: "Overview", segment: "" },
-    discharged: { name: "Admit", segment: "" },
   };
   const load = async (view) => {
     loading = true;
