@@ -80,6 +80,8 @@
     >
       <mb-option value="mother" label="Mother" />
       <mb-option value="father" label="Father" />
+      <mb-option value="daughter" label="Daughter" />
+      <mb-option value="son" label="Son" />
       <mb-option value="brother" label="Brother" />
       <mb-option value="sister" label="Sister" />
       <mb-option value="husband" label="Husband" />
