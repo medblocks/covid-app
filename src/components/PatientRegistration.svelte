@@ -61,14 +61,13 @@
     label="Phone number"
     path="telecom[0].value"
   />
-  <mb-input
-    path="identifier[0].value"
-    type="number"
-    min="100000000000"
-    max="999999999999"
-    label="Aadhar card number"
-  />
-  <mb-input path="identifier[0].system" class="hidden" data="aadhar" />
+  <mb-select label="Identifier type" path="identifier[0].system">
+    <mb-option value="aadhar" label="Aadhar" />
+    <mb-option value="driving" label="Driving License" />
+    <mb-option value="pan" label="PAN" />
+    <mb-option value="voter" label="Voter ID" />
+  </mb-select>
+  <mb-input path="identifier[0].value" label="Identifier number" />
   <mb-input label="Address" textarea path="address[0].text" />
   <label for="" class="font-bold">Attendant information</label>
   <div class="flex flex-col gap-4">

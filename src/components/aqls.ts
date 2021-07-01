@@ -49,7 +49,8 @@ export const allCompositions = async (ehrId) => {
     c/content[openEHR-EHR-SECTION.adhoc.v1,'Management']/items[openEHR-EHR-ACTION.procedure.v1,'Steam Inhalation'] as Steam, 
     c/content[openEHR-EHR-SECTION.adhoc.v1,'Management']/items[openEHR-EHR-ACTION.procedure.v1,'Deep Breathing Exercises'] as Deep_Breathing, 
     c/content[openEHR-EHR-SECTION.adhoc.v1,'Management']/items[openEHR-EHR-ACTION.procedure.v1,'Oxygen Therapy'] as Oxygen_Therapy, 
-    c/content[openEHR-EHR-SECTION.adhoc.v1,'Management']/items[openEHR-EHR-OBSERVATION.medication_statement.v0,'Other regular medication'] as Regular_Meds 
+    c/content[openEHR-EHR-SECTION.adhoc.v1,'Management']/items[openEHR-EHR-OBSERVATION.medication_statement.v0,'Other regular medication'] as Regular_Meds,
+    c/composer as Entered_By
     from EHR e CONTAINS COMPOSITION c [openEHR-EHR-COMPOSITION.encounter.v1]  
     where c/archetype_details/template_id/value MATCHES {'MCS.CovidCare.DailySheet.v0.1', 'MCS.CovidCare.DailySheet.v0.2'} 
     AND e/ehr_id/value='${ehrId}'

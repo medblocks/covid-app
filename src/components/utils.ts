@@ -4,6 +4,9 @@ export const formatValue = (data) => {
   if (data == null) {
     return "-";
   }
+  if (data["_type"] === "PARTY_IDENTIFIED") {
+    return data?.name;
+  }
   if (data["_type"] === "DV_QUANTITY") {
     const unitsMap = {
       "[degF]": "°F",

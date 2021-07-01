@@ -20,7 +20,7 @@
     cancelled: "Admission cancelled",
     unknown: "Patient expired",
     finished: "Discharged",
-    "onleave": "Discharged at Request",
+    onleave: "Discharged at Request",
     "in-progress": "On-going Admission",
     triaged: "Referred",
   };
@@ -49,6 +49,7 @@
       }
     }
     dailyData = await allCompositions(ehrId);
+    console.log(dailyData);
     scores = dailyData
       .map((row) => ({
         score: row.get("EWS")?.magnitude,
@@ -132,7 +133,7 @@
           </tr>
         </thead>
         <tbody>
-          {#each [...dailyData[0].keys()].slice(2, -1) as key}
+          {#each [...dailyData[0].keys()].slice(2) as key}
             <tr>
               <td
                 class="px-5 py-5 border-b border-gray-200 bg-white font-bold text-gray-600"
