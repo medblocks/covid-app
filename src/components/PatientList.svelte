@@ -120,12 +120,11 @@
                       <sl-button> {action.name} </sl-button>
                     </Link>
                     <sl-button
-                      type="danger"
                       on:click={() => {
                         deletePatient = patient.resource.id;
                       }}
                     >
-                      Delete
+                      <sl-icon name="trash-fill" />
                     </sl-button>
                   </div>
                 </td>
