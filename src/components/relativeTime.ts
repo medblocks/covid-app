@@ -5,5 +5,5 @@ export const relativeTime = (d: string) => {
     hour: "numeric",
     minute: "numeric",
     hourCycle: "h12",
-  }).format(new Date(d));
+  }).format(new Date(d.replace("Etc/UTC", "Z")));
 };

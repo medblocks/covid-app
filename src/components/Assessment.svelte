@@ -23,6 +23,8 @@
 
   let scores = {};
   let total;
+  let backdate: boolean = false;
+  let backdateTime: string;
   let composer_name: string;
   let error = false;
   onMount(async () => {
@@ -41,6 +43,8 @@
   async function handleSubmit(e: CustomEvent) {
     const data = e.detail;
     loading = true;
+    console.log(e);
+    console.log(ctx);
     try {
       if (compositionId) {
         const r = await openehr.put(
@@ -77,18 +81,36 @@
       total = null;
     }
   }
-  const ctx = {
-    careflow_step: {
-      terminology: "local",
-      value: "Medication recommended",
-      code: "at0109",
-    },
-    current_state: {
-      terminology: "openehr",
-      code: "526",
-      value: "planned",
-    },
-  };
+  let ctx;
+
+  $: if (backdateTime) {
+    ctx = {
+      time: new Date(backdateTime).toISOString(),
+      careflow_step: {
+        terminology: "local",
+        value: "Medication recommended",
+        code: "at0109",
+      },
+      current_state: {
+        terminology: "openehr",
+        code: "526",
+        value: "planned",
+      },
+    };
+  } else {
+    ctx = {
+      careflow_step: {
+        terminology: "local",
+        value: "Medication recommended",
+        code: "at0109",
+      },
+      current_state: {
+        terminology: "openehr",
+        code: "526",
+        value: "planned",
+      },
+    };
+  }
 </script>
 
 <p class="my-5 text-xl font-semibold text-gray-700">Daily Monitoring</p>
@@ -105,6 +127,20 @@
       composer_name = e.target.value;
     }}
   />
+  <sl-checkbox
+    checked={backdate}
+    on:sl-change={(e) => {
+      console.log(e);
+      backdate = e.target.checked;
+    }}>Backdate</sl-checkbox
+  >
+  {#if backdate}
+    <mb-date
+      time
+      on:mb-input={(e) => (backdateTime = e.target.data)}
+      label="Backdate"
+    />
+  {/if}
   <p class=" text-2xl font-bold text-gray-700">Vitals</p>
   <mb-buttons
     on:mb-input={(e) => {
