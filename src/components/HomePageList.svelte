@@ -16,9 +16,33 @@
     loading = true;
     if (view === "all") {
       const r = await fhir.get("/Patient", {
-        params: { _count: 50, _sort: "-_lastUpdated", _include: "" },
+        params: {
+          _count: 50,
+          _sort: "-_lastUpdated",
+          _revinclude: "Encounter:subject",
+        },
       });
-      patients = r.data?.entry || [];
+      const entries = r.data?.entry || [];
+      const onlypatients = entries.filter((e) => e?.search?.mode === "match");
+      let encounters = entries.filter((e) => e?.search?.mode === "include");
+      encounters = Object.fromEntries(
+        encounters.map((e) => [
+          e.resource.subject.reference.split("/")[1],
+          e.resource.status,
+        ])
+      );
+      console.log(encounters);
+      const nonDischargedPatients = onlypatients.filter((p) => {
+        const status = encounters[p.resource.id];
+        if (status) {
+          if (status === "in-progress") {
+            return true;
+          }
+          return false;
+        }
+        return true;
+      });
+      patients = nonDischargedPatients;
     } else if (view === "admitted") {
       const r = await fhir.get("/Encounter", {
         params: {
