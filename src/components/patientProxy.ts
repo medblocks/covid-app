@@ -19,6 +19,11 @@ interface PatientProxy {
   genderShort: string;
   shortUid: string;
 }
+const hashToNumber = (id: string) => {
+  const chars = [...id].map((a) => a.charCodeAt(0) - 65);
+  const positiveChars = chars.map((a) => (a < 0 ? a * -1 : a));
+  return positiveChars.join("").padStart(6, "0");
+};
 export const patientProxy = (patient: any): PatientProxy | undefined => {
   if (!patient) {
     return;
@@ -28,6 +33,6 @@ export const patientProxy = (patient: any): PatientProxy | undefined => {
     age: getAge(patient?.birthDate),
     gender: patient?.gender,
     genderShort: patient?.gender?.[0]?.toUpperCase(),
-    shortUid: patient?.id.slice(-6, -1),
+    shortUid: hashToNumber(patient?.id.slice(-4, -1)),
   };
 };

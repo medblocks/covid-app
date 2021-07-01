@@ -61,7 +61,7 @@
     label="Phone number"
     path="telecom[0].value"
   />
-  <mb-select label="Identifier type" path="identifier[0].system">
+  <mb-select datatype="code" label="Identifier type" path="identifier[0].system">
     <mb-option value="aadhar" label="Aadhar" />
     <mb-option value="driving" label="Driving License" />
     <mb-option value="pan" label="PAN" />

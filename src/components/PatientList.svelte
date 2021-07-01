@@ -108,17 +108,18 @@
                 </td>
                 <td class="py-5 border-b border-gray-200 bg-white text-sm">
                   <div class="flex flex-wrap gap-3 justify-center">
-                    <Link to={`patient/${patient.resource.id}`}>
-                      <sl-button>
-                        <sl-icon name="pencil" slot="prefix" />
-                        Edit
-                      </sl-button>
-                    </Link>
                     <Link
                       to={`clinical/${patient.resource.id}/${action.segment}`}
                     >
-                      <sl-button> {action.name} </sl-button>
+                      <sl-button type="info"> {action.name} </sl-button>
                     </Link>
+                    <Link to={`patient/${patient.resource.id}`}>
+                      <sl-button>
+                        <sl-icon name="pencil-fill" slot="prefix" />
+                        Edit
+                      </sl-button>
+                    </Link>
+                    
                     <sl-button
                       on:click={() => {
                         deletePatient = patient.resource.id;
