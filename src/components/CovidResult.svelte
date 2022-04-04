@@ -82,6 +82,6 @@
     <mb-context path="mcs.covidresult.v0/territory" />
   </div>
   <mb-submit>
-    <sl-button {loading} type="info"> Save </sl-button>
+    <sl-button {loading} type="neutral"> Save </sl-button>
   </mb-submit>
 </mb-form>

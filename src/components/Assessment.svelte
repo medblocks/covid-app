@@ -16,7 +16,7 @@
 
   let form;
   let loading = false;
-  let onAir = true;
+  let onAir;
 
   let resp, temp, heart, sat, sys: number | undefined;
   let respScore, satScore, tempScore, sysScore, heartScore: string | undefined;
@@ -397,7 +397,7 @@
   {/each}
   <mb-checkbox-any
     disabled
-    data={!onAir}
+    checked={onAir===false}
     path="covid_care_daily_sheet/management/oxygen_therapy/procedure_name"
     label={`On Oxygen ('On Air' ${!onAir ? "uncheck" : "checked"})`}
     bind={{
@@ -675,7 +675,7 @@
     </p>
   {/if}
   <mb-submit>
-    <sl-button size="large" class="mt-4 w-full" {loading} type="info">
+    <sl-button size="large" class="mt-4 w-full" {loading} type="neutral">
       Save
     </sl-button>
   </mb-submit>

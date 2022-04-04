@@ -111,7 +111,7 @@
                     <Link
                       to={`clinical/${patient.resource.id}/${action.segment}`}
                     >
-                      <sl-button type="info"> {action.name} </sl-button>
+                      <sl-button type="neutral"> {action.name} </sl-button>
                     </Link>
                     <Link to={`patient/${patient.resource.id}`}>
                       <sl-button>

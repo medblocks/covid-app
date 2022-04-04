@@ -19,7 +19,7 @@
   <h2 class="text-2xl leading-tight">
     <div class="my-3">
       <Link to="/">
-        <sl-button type="info">All Patients</sl-button>
+        <sl-button type="neutral">All Patients</sl-button>
       </Link>
       <Link to="admissions">
         <sl-button type="text">Admissions</sl-button>

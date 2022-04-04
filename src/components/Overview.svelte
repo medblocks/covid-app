@@ -73,7 +73,7 @@
     </sl-button>
   </Link>
   <Link to={`covid`}>
-    <sl-button type="info">
+    <sl-button type="neutral">
       Covid Report <sl-icon slot="suffix" name="plus-circle-fill" />
     </sl-button>
   </Link>

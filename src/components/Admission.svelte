@@ -58,6 +58,6 @@
   </mb-select>
 
   <mb-submit>
-    <sl-button {loading} type="info" class="w-full">Save</sl-button>
+    <sl-button {loading} type="neutral" class="w-full">Save</sl-button>
   </mb-submit>
 </mb-fhir-form>

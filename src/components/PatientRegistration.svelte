@@ -97,7 +97,7 @@
     />
   </div>
   <mb-submit>
-    <sl-button size="large" class="mt-4 w-full" {loading} type="info">
+    <sl-button size="large" class="mt-4 w-full" {loading} type="neutral">
       Save
     </sl-button>
   </mb-submit>

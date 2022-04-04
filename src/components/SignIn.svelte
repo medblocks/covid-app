@@ -24,7 +24,7 @@
       toggle-password
       placeholder="Password"
       on:sl-input={(e) => (password = e.target.value)}
-    /><sl-button submit type="info">Sign in</sl-button>
+    /><sl-button submit type="neutral">Sign in</sl-button>
 
     {#if state}
       <p class="capitalize mt-5 text-red-600 font-semibold">

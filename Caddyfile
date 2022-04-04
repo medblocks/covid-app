@@ -1,38 +1,9 @@
-
 :8080 {
-    @secured {
-	    not method OPTIONS
-        path /*
-    }
-
-    @fhir {
-        not method OPTIONS
-        path /fhir/*
-    }
-    @ehrbase {
-        not method OPTIONS
-        path /ehrbase/*
-    }
-
-    @options {
-        method OPTIONS
-        path /*
-    }
-
-    respond @options ""
-    
-    #basicauth @secured {
-	#   admin JDJhJDE0JFZyazhvT1d6a2VESUlyaG1keTk0VWVEQ1psQVBxc2pVbDZqd0lFQy5GUzZUWENZbVNRLkxL
-    #}
-    
-    reverse_proxy @fhir fhir:8080
-    
-    reverse_proxy @ehrbase ehrbase:8080
-
-    header /* {
-        ?Access-Control-Allow-Origin "*"
-        Access-Control-Allow-Methods "OPTIONS, GET, PUT, POST, DELETE"
-        Access-Control-Allow-Headers "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization, X-CSRF-Token, Cache-Control"
-        Access-Control-Expose-Headers Authorization
+    root * /usr/share/caddy
+    file_server
+    try_files {path} /index.html
+    templates {
+        mime text/javascript application/javascript
+        between %% %%
     }
 }

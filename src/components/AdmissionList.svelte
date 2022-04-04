@@ -28,7 +28,7 @@
         <sl-button type="text">All Patients</sl-button>
       </Link>
       <Link to="admissions">
-        <sl-button type="info">Admissions</sl-button>
+        <sl-button type="neutral">Admissions</sl-button>
       </Link>
     </div>
   </h2>

@@ -54,6 +54,6 @@
   <mb-input type="number" label="Total Donations" path="totalNet.value" />
   <mb-input textarea path="note[0].text" label="Notes" />
   <mb-submit>
-    <sl-button {loading} type="info" class="w-full">Save</sl-button>
+    <sl-button {loading} type="neutral" class="w-full">Save</sl-button>
   </mb-submit>
 </mb-fhir-form>
