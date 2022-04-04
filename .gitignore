@@ -2,3 +2,7 @@
 /dist/
 /.vscode/
 .DS_Store
+.env.development
+.env.production
+/templates/
+cloud-db.sql

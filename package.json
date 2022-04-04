@@ -4,24 +4,26 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "release": "standard-version -a && git push --follow-tags origin master"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.7",
-    "autoprefixer": "^10.2.5",
-    "postcss": "^8.3.0",
-    "svelte": "^3.37.0",
-    "svelte-preprocess": "^4.7.2",
-    "tailwindcss": "^2.1.2",
-    "typescript": "^4.2.4",
-    "vite": "^2.3.3",
-    "vite-plugin-windicss": "^0.16.7",
-    "windicss": "^3.0.12"
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.40",
+    "autoprefixer": "^10.4.4",
+    "postcss": "^8.4.12",
+    "svelte": "^3.46.6",
+    "svelte-preprocess": "^4.10.4",
+    "tailwindcss": "^3.0.23",
+    "typescript": "^4.6.3",
+    "vite": "^2.9.1",
+    "vite-plugin-windicss": "^1.8.3",
+    "windicss": "^3.5.1"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.26.1",
     "chart.js": "^3.3.2",
-    "medblocks-ui": "0.0.51",
+    "medblocks-ui": "^0.0.87",
+    "standard-version": "^9.3.2",
     "svelte-routing": "^1.6.0"
   }
 }
